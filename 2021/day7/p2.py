@@ -1,10 +1,6 @@
-import statistics
-
-
 with open('p1.in') as file:
     for fline in file:
-        crabs = [int(x) for x in fline.strip().split(",")]       
-
+        crabs = [int(x) for x in fline.strip().split(",")]    
 
 start = min(crabs)
 stop = max(crabs)
