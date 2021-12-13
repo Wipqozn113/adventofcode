@@ -42,7 +42,7 @@ class Paper:
         for row in self.paper:
             line = ""
             for column in row:
-                line += "#" if column > 0 else "."
+                line += "#" if column > 0 else " "
             print(line)
 
     def PrintDebugPaper(self):
