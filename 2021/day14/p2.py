@@ -24,9 +24,7 @@ def Insert(template, rules, characters):
         template[rem] = 0
 
     for key, value in add.items():
-        if key not in template:
-            template[key] = 0
-        template[key] += value
+        InsertChar(key, value, template)
     
             
 def IncrementChar(char, count, characters):
