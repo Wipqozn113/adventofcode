@@ -146,29 +146,39 @@ class SnailfishNumber:
 
     # [1,2] + [[3,4],5] becomes [[1,2],[[3,4],5]]
     def __add__(self, other):
-        number = SnailfishNumber([self, other])        
+        number = SnailfishNumber([self, other])                
         self = number
         self.left.parent = self
         self.right.parent = self  
-
         self.Reduce() 
 
         return self      
 
 
 numbers = []
+
 number = None
 with open('p1.in') as file:
     for line in file:
         exec("number = " + line.strip())
-        numbers.append(SnailfishNumber(number))
+        numbers.append(number)
 
-num = numbers.pop(0)
-while len(numbers) > 0:  
-    num += numbers.pop(0)
-    #print(num.Print())
+magnitude = 0
+for n1 in numbers:
+    for n2 in numbers:
+        if n1 == n2:
+            continue
+
+        n3 = SnailfishNumber(n1) + SnailfishNumber(n2)
+        n4 = SnailfishNumber(n2) + SnailfishNumber(n1)
+        mag3 = n3.Magnitude
+        mag4 = n4.Magnitude
+        mag = mag3 if mag3 > mag4 else mag4
+        magnitude = mag if magnitude < mag else magnitude
 
 
-print(num.Magnitude)        
+
+
+print(magnitude)        
 
 
