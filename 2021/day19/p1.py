@@ -22,6 +22,7 @@ class Rotation:
             Coordinates(x, -z, y),
             Coordinates(x, -y, -z),
             Coordinates(x, z, -y),
+            Coordinates(x, -y, z),
             # x is facing -x
             Coordinates(-x, -y, z),
             Coordinates(-x, -z, -y),
