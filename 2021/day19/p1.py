@@ -8,6 +8,9 @@ class Coordinates:
     def __add__(self, other):
         return Coordinates(self.x + other.x, self.y + other.y, self.z + other.z)
 
+    def __sub__(self, other):
+        return Coordinates(self.x - other.x, self.y - other.y, self.z - other.z)
+
     def __eq__(self, other):
         return (self.x == other.x) and (self.y == other.y) and (self.z == other.z)
 
@@ -104,10 +107,41 @@ class Beacon:
     def Rotation(self, rot):
         return self.rotations.rotations[rot]
 
+    def __eq__(self, other):
+        return self.coord == other.coord
+
+class CompositeScanner:
+    def __init__(self, scanner):
+        self.scanner0 = scanner
+        self.scanners = [scanner]
+
+    def FindOverlapping(self, other):
+        for scanner in self.scanners:
+            print(scanner.id, other.id)
+            matches, beacons, coord = scanner.Overlapping(other)
+            if matches:
+                print(coord.x, coord.y, coord.z)
+                self.scanners.append(Scanner(other.id, beacons, coord))  
+
+                return True
+        return False
+            
+    @property
+    def TotalBeacons(self):
+        beacons = []
+        for scanner in self.scanners:
+            for beacon in scanner.beacons:
+                if beacon not in beacons:
+                    beacons.append(beacon)
+
+        return len(beacons)
+
+       
+
 class Scanner:
-    def __init__(self, id, beacons=[], coordinates=None):
+    def __init__(self, id, beacons=None, coordinates=None):
         self.id = id
-        self.beacons = []
+        self.beacons = beacons if beacons is not None else []
         self.coord = coordinates
      
     def SetCoordinates(self, x, y, z):
@@ -119,36 +153,40 @@ class Scanner:
     def Overlapping(self, other):
         for beacon_s in self.beacons:
             for beacon_o in other.beacons:
-                for rot in range(24):
+                for rot in range(48):
                     position_o = beacon_s.coord + beacon_o.Rotation(rot)       
-
+                    
                     matches = 0
                     matching_beacons = []
                     for bs in self.beacons:
                         for bo in other.beacons:
                             if position_o == bs.coord + bo.Rotation(rot):
                                 matches += 1
-                                matching_beacons.append(bs.coord.coord)
+                                matching_beacons.append(bs)
 
                     if matches == 12:
-                        for b in matching_beacons:
-                            print(b)
-                        print(position_o.x, position_o.y, position_o.z)
-                        return True
+                        beacons = []                         
+                        for beacon in other.beacons:
+                            coord = position_o - beacon.Rotation(rot) 
+                            beacons.append(Beacon(coord))
+                        return (True, beacons, position_o)
                     
-        return False
+        return (False, None, None)
 
 
-
+scanner0 = None
 scanners = []
 rotations = []
-with open('s2.in') as file:
+with open('p1.in') as file:
     for line in file:
         if line[0:2] == "--":
-            scanner = Scanner(len(scanners))
-            scanners.append(scanner)
-            if len(scanners) == 1:
+            scanner = Scanner(len(scanners)+1)            
+            if scanner0 is None:
+                scanner0 = scanner
+                scanner0.id = 0
                 scanner.SetCoordinates(0, 0, 0)
+            else:
+                scanners.append(scanner)
         elif line.strip() == "":
             continue
         else:
@@ -156,5 +194,18 @@ with open('s2.in') as file:
             beacon = Beacon(Coordinates(int(l[0]), int(l[1]), int(l[2])))
             scanner.AddBeacon(beacon)
 
-scanners[0].Overlapping(scanners[1])
+compscanner = CompositeScanner(scanner0)
+while True:
+    unmatched = []
+    if len(scanners) == 0:
+        break
+    indexes = []
+    for scanner in scanners:
+        matched = compscanner.FindOverlapping(scanner)
+        if not matched:
+            unmatched.append(scanner)
+    scanners = list(unmatched)
+            
+
+print(compscanner.TotalBeacons)
 
