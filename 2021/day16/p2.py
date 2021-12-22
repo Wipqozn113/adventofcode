@@ -123,19 +123,19 @@ class Packet:
         
         elif self.type == 5:
             # greater than
-            val = 1 if self.subpackets[0].Value > self.subpackets[1].Value else 0
+            val = int(self.subpackets[0].Value > self.subpackets[1].Value)
 
         elif self.type == 6:
             # less than
-            val = 1 if self.subpackets[0].Value < self.subpackets[1].Value else 0
+            val = int(self.subpackets[0].Value < self.subpackets[1].Value)
 
         elif self.type == 7:
             # equal to
-            val = 1 if self.subpackets[0].Value == self.subpackets[1].Value else 0
+            val = int(self.subpackets[0].Value == self.subpackets[1].Value)
 
         return val
 
-with open('p2.in') as file:
+with open('s2.in') as file:
     for line in file:
         l = line.split("|")
         # Test case

@@ -19,35 +19,69 @@ class Rotation:
         self.rotations = [
             # x is facing x
             Coordinates(x, y, z),
-            Coordinates(x, -z, y),
-            Coordinates(x, -y, -z),
-            Coordinates(x, z, -y),
+            Coordinates(x, y, -z),
             Coordinates(x, -y, z),
-            # x is facing -x
-            Coordinates(-x, -y, z),
-            Coordinates(-x, -z, -y),
+            Coordinates(x, -y, -z),
+
+            Coordinates(x, z, y),
+            Coordinates(x, z, -y),
+            Coordinates(x, -z, y),
+            Coordinates(x, -z, -y),
+
+              # x is facing -x
+            Coordinates(-x, y, z),
             Coordinates(-x, y, -z),
+            Coordinates(-x, -y, z),
+            Coordinates(-x, -y, -z),
+
             Coordinates(-x, z, y),
+            Coordinates(-x, z, -y),
+            Coordinates(-x, -z, y),
+            Coordinates(-x, -z, -y),
+
             # x is facing y
-            Coordinates(-z, x, -y),
-            Coordinates(y, x, -z),
             Coordinates(z, x, y),
+            Coordinates(z, x, -y),
+            Coordinates(-z, x, y),
+            Coordinates(-z, x, -y),
+        
+            Coordinates(y, x, z),
+            Coordinates(y, x, -z),
             Coordinates(-y, x, z),
+            Coordinates(-y, x, -z),
+
             # x is facing -y
+            Coordinates(z, -x, y),
             Coordinates(z, -x, -y),
-            Coordinates(y, -x, z),
             Coordinates(-z, -x, y),
+            Coordinates(-z, -x, -y),
+        
+            Coordinates(y, -x, z),
+            Coordinates(y, -x, -z),
+            Coordinates(-y, -x, z),
             Coordinates(-y, -x, -z),
+            
             # x is facing z
-            Coordinates(-y, -z, x),
-            Coordinates(z, -y, x),
             Coordinates(y, z, x),
+            Coordinates(y, -z, x),
+            Coordinates(-y, z, x),
+            Coordinates(-y, -z, x),
+           
+            Coordinates(z, y, x),
+            Coordinates(z, -y, x),
             Coordinates(-z, y, x),
+            Coordinates(-z, -y, x),
+  
             # x is facing -z
-            Coordinates(z, y, -x),
+            Coordinates(y, z, -x),
+            Coordinates(y, -z, -x),
             Coordinates(-y, z, -x),
+            Coordinates(-y, -z, -x),
+           
+            Coordinates(z, y, -x),
+            Coordinates(z, -y, -x),
+            Coordinates(-z, y, -x),
             Coordinates(-z, -y, -x),
-            Coordinates(y, -z, -x)
         ]
     
     def Print(self):
@@ -87,8 +121,7 @@ class Scanner:
             for beacon_o in other.beacons:
                 for rot in range(24):
                     position_o = beacon_s.coord + beacon_o.Rotation(rot)       
-                    if position_o.x == 68 and position_o.y == -1246 and position_o.z == -43:
-                        print("ok") 
+
                     matches = 0
                     matching_beacons = []
                     for bs in self.beacons:
@@ -98,7 +131,9 @@ class Scanner:
                                 matching_beacons.append(bs.coord.coord)
 
                     if matches == 12:
-                        print(matching_beacons)
+                        for b in matching_beacons:
+                            print(b)
+                        print(position_o.x, position_o.y, position_o.z)
                         return True
                     
         return False

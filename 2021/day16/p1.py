@@ -76,7 +76,7 @@ class Packet:
             sum += packet.VersionSum()
         return sum
 
-with open('p2.in') as file:
+with open('p1.in') as file:
     for line in file:
         l = line.split("|")
         # Test case
