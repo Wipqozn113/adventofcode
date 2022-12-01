@@ -17,9 +17,6 @@ class Alu:
     def Load(self, id):
         if id in self.states:
             state = self.states[id]
-            self.variables["w"].val = state["w"]
-            self.variables["x"].val = state["x"]
-            self.variables["y"].val = state["y"]
             self.variables["z"].val = state["z"]
 
     def Delete(self, id):
@@ -47,7 +44,6 @@ class Alu:
     
     def Execute(self, group, num):
         for a in range (1, 10):
-            self.Load(num)
             numcurr = num + str(a)
             try:
                 for comm in self.groupedcommands[group]:
@@ -55,15 +51,19 @@ class Alu:
             # Invalid command, continue to next input
             except ValueError:
                 continue
-
             self.Save(numcurr)
-            if len(numcurr) < 14: 
-                self.Execute(group + 1, numcurr)
-                self.Delete(numcurr)
-            elif self.variables["z"].val == 0:
-                print("oh g oodie")            
-                val = int(numcurr)
-                self.largest = val if val > self.largest else self.largest  
+            print(self.variables["z"].val % 26)
+
+            """
+                        self.Save(numcurr)
+                        if len(numcurr) < 14: 
+                            self.Execute(group + 1, numcurr)
+                            self.Delete(numcurr)
+                        elif self.variables["z"].val == 0:
+                            print("oh g oodie")            
+                            val = int(numcurr)
+                            self.largest = val if val > self.largest else self.largest
+            """
    
 
     def ExecuteCommand(self, command, val):
