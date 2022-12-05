@@ -1,7 +1,3 @@
-class Crate:
-    def __init__(self, val):
-        self.name = val
-
 class Stack:
     def __init__(self):
         self.stack = []
