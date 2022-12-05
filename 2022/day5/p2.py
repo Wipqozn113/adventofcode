@@ -14,9 +14,6 @@ class Stack:
     def TopLetter(self):
         return self.stack[len(self.stack) - 1]
 
-    def Reverse(self):
-        self.stack.reverse()
-
 class Ship:
     def __init__(self, size):
         self.stacks = []
