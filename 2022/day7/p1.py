@@ -5,10 +5,11 @@ class File:
         self.directory = directory
 
 class Directory:
-    def __init__(self, name):
+    def __init__(self, name, parent):
         self.name = name
         self.files = {}
         self.directories = {}
+        self.parent = parent
 
     def AddFile(self, name, size):
         if name not in self.files:
@@ -16,7 +17,7 @@ class Directory:
     
     def AddDirectory(self, name):
         if name not in self.directories:
-            self.directories[name] = Directory(self, name)
+            self.directories[name] = Directory(self, name, self)
     
     def Size(self):
         size = 0
@@ -35,9 +36,8 @@ class Directory:
         for key, file in self.files.items():
             print(depth, '-', file.name, '(file, size=', 585, ')')
 
-
-
-
 class Filesystem:
     def __init__(self):
-        self.directories = []
+        self.root = Directory('/', None)
+        self.current = self.root
+    
