@@ -43,11 +43,12 @@ class Directory:
 
 
 class Filesystem:
-    def __init__(self):
+    def __init__(self, diskspace):
         self.root = None
         self.currentdir = None
         self.lsdir = None
         self.dirset = set()
+        self.diskspace = diskspace
     
     def DirSizeSum(self, maxsize):
         size = 0
@@ -56,6 +57,17 @@ class Filesystem:
                 size += dir.Size()
         
         return size
+
+    def DirectoryToDelete(self, spacerequired):
+        smallest = self.root
+        smallestSize = self.root.Size()
+        freespace = self.diskspace  - self.root.Size()
+        for dir in self.dirset:
+            size = dir.Size()
+            if((size < smallestSize) and (freespace + size > spacerequired)):
+                smallest = dir
+                smallestSize = size
+        return smallest
 
 
     def PrintSystemTree(self):
@@ -98,7 +110,8 @@ class Filesystem:
             file = self.currentdir.AddFile(out[1].strip(), out[0].strip()) # Creates file if required. Returns the new or already existing file.
     
     
-fs = Filesystem()
+fs = Filesystem(70000000)
 fs.ProcessInput("input.in")
 fs.PrintSystemTree()
-print(fs.DirSizeSum(100000))
+dir = fs.DirectoryToDelete(30000000)
+print(dir.Size())
