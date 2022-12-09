@@ -69,7 +69,7 @@ class Knot:
 
         
 head = Knot(9)
-with open('test.in') as file:
+with open('input.in') as file:
     for line in file:
         l = line.strip().split(' ')
         head.Move(l[0].strip(), int(l[1].strip()))
