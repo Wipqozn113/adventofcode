@@ -12,6 +12,7 @@ class Tree:
         self.partners = []
         self.trees = {}
         self.tallest = {}
+        self.scenic_score = None
 
     def PopulatePartners(self):
         self.partners = [self.bottom,self.left,self.right,self.top]
@@ -64,6 +65,33 @@ class Tree:
 
         self.visibility_checked = True
         return self.is_visible
+
+    def ViewingDistance(self, next_tree, direction, distance, height):
+        if next_tree is None: # or next_tree.height >= height:
+            return distance
+        
+        distance += 1
+        if next_tree.trees[direction] is None or next_tree.height >= height:
+            return distance
+
+        return next_tree.ViewingDistance(next_tree.trees[direction], direction, distance, height)            
+
+    def CalculateScenicScore(self):
+        scenic_score = 1
+        for direction, tree in self.trees.items():
+            scenic_score *= self.ViewingDistance(tree, direction, 0, self.height)
+            #print(self.height, direction, self.ViewingDistance(tree, direction, 0, self.height))
+        
+        return scenic_score
+
+def FindHighestScenic(trees):
+    highest = 0
+    for row in trees:
+        for tree in row:       
+            score = tree.CalculateScenicScore()
+            if score > highest:
+                highest = score
+    return highest
 
 def PopulateForest(filename):
     height = sum(1 for line in open(filename))
@@ -121,6 +149,6 @@ def CountVisibleTrees(trees):
     return count
 
 trees = PopulateForest("input.in")
-count = CountVisibleTrees(trees)
+count = FindHighestScenic(trees)
 print(count)
                 
