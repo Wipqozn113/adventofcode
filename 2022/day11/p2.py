@@ -4,8 +4,8 @@ class Item:
     def __init__(self, worry_level):
         self.worry_level = int(worry_level)
 
-    def UpdateWorry(self, worry):
-        self.worry_level = math.floor(worry // 3)
+    def UpdateWorry(self, worry, lcm):
+        self.worry_level = worry % lcm
 
 class Monkey:
     def __init__(self, name):
@@ -17,6 +17,7 @@ class Monkey:
         self.truemon = None
         self.falsemon = None
         self.inspects = 0  
+        self.lcm = 0
 
     def PrintMe(self):
         pr = '''
@@ -55,10 +56,11 @@ class Monkey:
             self.falsemon.Take(item)
     
     def Inspect(self, item):
+        lcm = self.lcm
         self.inspects += 1
         before = item.worry_level
-        fx = self.fx(item.worry_level)
-        item.UpdateWorry(self.fx(item.worry_level))
+        fx = self.fx(item.worry_level) 
+        item.UpdateWorry(self.fx(item.worry_level), self.lcm)
         after = item.worry_level
 
 def CreateMonkeys(filename):
@@ -90,7 +92,8 @@ def CreateMonkeys(filename):
 
 def RunRounds(monkeys, rounds):
     for round in range(rounds):
-        print("On round ", round)
+        if(round % 1000 == 0):
+            print("On round ", round)
         for monkey in monkeys:
             monkey.Turn(monkeys)
 
@@ -104,8 +107,19 @@ def PrintMonkeys(monkeys):
     for monkey in monkeys:
         monkey.PrintMe()
 
+def SetLcm(monkeys):
+    lcm = 1
+    for monkey in monkeys:
+        lcm *= monkey.divisor
+    for monkey in monkeys:
+        monkey.lcm = lcm
+
+    return lcm
+
 monkeys = CreateMonkeys("input.in")
-#PrintMonkeys(monkeys)
+lcm = SetLcm(monkeys)
+print(lcm)
+PrintMonkeys(monkeys)
 RunRounds(monkeys, 10000)
 print(CalcMonkeyBusiness(monkeys))
 

@@ -105,7 +105,7 @@ def PrintMonkeys(monkeys):
     for monkey in monkeys:
         monkey.PrintMe()
 
-monkeys = CreateMonkeys("input.in")
+monkeys = CreateMonkeys("test.in")
 #PrintMonkeys(monkeys)
 RunRounds(monkeys, 20)
 print(CalcMonkeyBusiness(monkeys))
