@@ -1,4 +1,4 @@
-import math
+import time
 
 class Item:
     def __init__(self, worry_level):
@@ -31,19 +31,16 @@ class Monkey:
         print(pr)
 
     def SetFx(self, fx):
-        self.fxstr = fx
         self.fx = lambda old: eval(fx)
     
     def Take(self, item):
         self.items.append(item)
 
-    def Turn(self, monkeys):
-        # Throw monkeys haven't been set yet
-        if isinstance(self.truemon, int):
-            self.truemon = monkeys[self.truemon]
-            self.falsemon = monkeys[self.falsemon]           
+    def SetTrueFalseMons(self, monkeys):
+        self.truemon = monkeys[self.truemon]
+        self.falsemon = monkeys[self.falsemon]  
 
-
+    def Turn(self, monkeys):   
         for item in self.items:
             self.Inspect(item)
             self.Throw(item)
@@ -56,12 +53,8 @@ class Monkey:
             self.falsemon.Take(item)
     
     def Inspect(self, item):
-        lcm = self.lcm
         self.inspects += 1
-        before = item.worry_level
-        fx = self.fx(item.worry_level) 
         item.UpdateWorry(self.fx(item.worry_level), self.lcm)
-        after = item.worry_level
 
 def CreateMonkeys(filename):
     i = -1
@@ -88,19 +81,20 @@ def CreateMonkeys(filename):
             elif line.startswith("    If false:"):
                 mon = line.split(" ")[-1]
                 monkeys[i].falsemon= int(mon)
+    for monkey in monkeys:
+        monkey.SetTrueFalseMons(monkeys)
     return monkeys
 
 def RunRounds(monkeys, rounds):
     for round in range(rounds):
-        if(round % 1000 == 0):
-            print("On round ", round)
+        #if(round % 1000 == 0):
+         #   print("Round ", round)
         for monkey in monkeys:
             monkey.Turn(monkeys)
 
 
 def CalcMonkeyBusiness(monkeys):
-    monkeys.sort(key=lambda x: x.inspects, reverse=True)
-    print(monkeys[0].inspects, monkeys[1].inspects)
+    monkeys.sort(key=lambda x: x.inspects, reverse=True)    
     return monkeys[0].inspects * monkeys[1].inspects
 
 def PrintMonkeys(monkeys):
@@ -116,11 +110,12 @@ def SetLcm(monkeys):
 
     return lcm
 
+start_time = time.time()
 monkeys = CreateMonkeys("input.in")
 lcm = SetLcm(monkeys)
-print(lcm)
-PrintMonkeys(monkeys)
+#PrintMonkeys(monkeys)
 RunRounds(monkeys, 10000)
 print(CalcMonkeyBusiness(monkeys))
+print("--- %s seconds ---" % (time.time() - start_time))
 
 
