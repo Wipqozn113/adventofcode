@@ -1,11 +1,13 @@
 import time
+inspecttime = 0
+throwtime = 0
 
 class Item:
     def __init__(self, worry_level):
         self.worry_level = int(worry_level)
 
-    def UpdateWorry(self, worry, lcm):
-        self.worry_level = worry % lcm
+    def UpdateWorry(self, worry):
+        self.worry_level = worry
 
 class Monkey:
     def __init__(self, name):
@@ -47,14 +49,20 @@ class Monkey:
         self.items = []
 
     def Throw(self, item):
+        global throwtime
+        t = time.time()
         if item.worry_level % self.divisor == 0:
             self.truemon.Take(item)
         else:
             self.falsemon.Take(item)
+        throwtime += time.time() - t
     
     def Inspect(self, item):
+        global inspecttime
+        t = time.time()
         self.inspects += 1
-        item.UpdateWorry(self.fx(item.worry_level), self.lcm)
+        item.worry_level = self.fx(item.worry_level) % self.lcm
+        inspecttime += time.time() - t
 
 def CreateMonkeys(filename):
     i = -1
@@ -116,6 +124,8 @@ lcm = SetLcm(monkeys)
 #PrintMonkeys(monkeys)
 RunRounds(monkeys, 10000)
 print(CalcMonkeyBusiness(monkeys))
+print("--- %s seconds (throw)---" % throwtime)
+print("--- %s seconds (inspect) ---" % inspecttime)
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
