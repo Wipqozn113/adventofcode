@@ -1,4 +1,5 @@
 import queue
+import math
 
 class Graph:
     def __init__(self, root=None):
@@ -67,6 +68,65 @@ class Graph:
                     child.explored = True
                     child.parent = node
                     q.put(child)
+    
+    def Dijkstra(self, root=None):
+        if root is None:
+            root = self.root
+
+        distance = {}
+        previous = {}
+        nodes = {}
+        for node in self.nodes:
+            distance[node] = math.inf
+            previous[node] = None
+            nodes[node] = node
+        
+        while len(nodes) > 0:
+            key = min(distance)
+            node = nodes.pop(key, None)
+
+            for child in node.children:
+                if child in nodes:
+                    alt = distance[key] + node.Distance(child)
+                    if alt < distance[child]:
+                        distance[child] = alt
+                        previous[child] = node
+
+        return distance, previous
+
+    def DijkstraTarget(self, goal, root=None):
+        if root is None:
+            root = self.root
+
+        distance = {}
+        previous = {}
+        nodes = {}
+        for node in self.nodes:
+            distance[node] = math.inf
+            previous[node] = None
+            nodes[node] = node
+        
+        while len(nodes) > 0:
+            key = min(distance)
+            node = nodes.pop(key, None)
+
+            # Goal found, break from loop
+            if node is goal:
+                break
+
+            for child in node.children:
+                if child in nodes:
+                    alt = distance[key] + node.Distance(child)
+                    if alt < distance[child]:
+                        distance[child] = alt
+                        previous[child] = node
+
+        # NEED TO DO SHORTEST INVERSE CRAWL
+
+
+        return distance, previous
+
+
 
 class Node:
     def __init__(self, obj = None):
@@ -75,6 +135,9 @@ class Node:
         self.parent = None
         self.parents = []
         self.explored = False
+
+    def Distance(self, node):
+        pass
     
     @property
     def id(self):
