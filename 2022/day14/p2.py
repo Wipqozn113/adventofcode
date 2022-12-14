@@ -29,15 +29,34 @@ class Cave:
                 line += self.cave[row][col]
             print(line)
                 
+    def CreateCave(self, filename):
+        highest_y = 0
+        with open(filename) as file:
+            for line in file:
+                line = line.strip()
+                y = self.AddRocks(line)
+                if y > highest_y:
+                    highest_y = y
+
+        # Slice off extra parts of cave
+        self.cave = self.cave[:highest_y + 2]
+        self.cave.append(["#"] * self.width)
+        self.PrintMe()        
+        self.height = len(self.cave) - 1
 
     def AddRocks(self, path):
         coordinates = path.split('->')
         last_coord = None
+        highest_y = 0
         for coordinate in coordinates:
             coord = Coordinate(*(coordinate.strip().split(',')))            
+            if coord.y > highest_y:
+                highest_y = coord.y
             if last_coord is not None:
                 self.DrawPath(coord, last_coord)
             last_coord = coord
+
+        return highest_y
         
 
     def FillWithSand(self, drop_coord=None):
@@ -96,12 +115,9 @@ class Cave:
                 x += 1
 
 def CalculateSandFill(cave, filename):
-    with open(filename) as file:
-        for line in file:
-            line = line.strip()
-            cave.AddRocks(line)
+    cave.CreateCave(filename)
     return cave.FillWithSand()
 
 cave = Cave()
-print(CalculateSandFill(cave, "input.in"))
+print(CalculateSandFill(cave, "test.in"))
 #cave.PrintMe()
