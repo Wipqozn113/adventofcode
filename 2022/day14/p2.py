@@ -23,7 +23,7 @@ class Cave:
 
     def PrintMe(self):
         start = False
-        for row in range(20):
+        for row in range(self.height):
             line = ""
             for col in range(480, 520):
                 line += self.cave[row][col]
@@ -41,8 +41,7 @@ class Cave:
         # Slice off extra parts of cave
         self.cave = self.cave[:highest_y + 2]
         self.cave.append(["#"] * self.width)
-        self.PrintMe()        
-        self.height = len(self.cave) - 1
+        self.height = len(self.cave)       
 
     def AddRocks(self, path):
         coordinates = path.split('->')
@@ -75,6 +74,8 @@ class Cave:
     def CreateSand(self, drop_coord):
         rest_coord = None
         curr = Coordinate(drop_coord.x, drop_coord.y)
+        if self.cave[curr.y][curr.x] == "O":
+            return None
         while True:
             # print(curr.x, curr.y)
             # Don't bother checking X, since we're just going to force the Cave to be large enough
@@ -119,5 +120,5 @@ def CalculateSandFill(cave, filename):
     return cave.FillWithSand()
 
 cave = Cave()
-print(CalculateSandFill(cave, "test.in"))
+print(CalculateSandFill(cave, "input.in"))
 #cave.PrintMe()
