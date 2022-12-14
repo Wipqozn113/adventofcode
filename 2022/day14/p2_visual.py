@@ -121,4 +121,38 @@ def CalculateSandFill(cave, filename):
 
 cave = Cave()
 
-print(CalculateSandFill(cave, "input.in"))
+#print(CalculateSandFill(cave, "input.in"))
+
+
+#importing libraries
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+
+
+fig = plt.figure()
+#creating a subplot 
+ax1 = fig.add_subplot(1,1,1)
+
+def animate(i):
+    cave = Cave()
+    cave.CreateCave("test.in")
+    xs = []
+    ys = []
+   
+    for y in range(cave.height):
+        for x in range(cave.width):
+            if cave.cave[y][x] == "#":
+                xs.append(y)
+                ys.append(x)
+    
+    
+    ax1.clear()
+    ax1.plot(xs, ys)
+
+    plt.xlabel('Date')
+    plt.ylabel('Price')
+    plt.title('Live graph with matplotlib')	
+	
+    
+ani = animation.FuncAnimation(fig, animate, interval=1000) 
+plt.show()
