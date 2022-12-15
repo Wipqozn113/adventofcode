@@ -1,5 +1,14 @@
 import math
 
+class Line:
+    def __init__(self, coord1, coord2):        
+        self.start = coord1 if coord1.x < coord2.x else coord2
+        self.end = coord1 if coord1.x >= coord2.x else coord2
+
+    def JoinLines(self, line):
+        
+
+
 class Coordinate:
     def __init__(self, x, y):
         self.x = int(x)
