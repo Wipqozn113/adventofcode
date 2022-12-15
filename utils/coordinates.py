@@ -2,8 +2,8 @@ import math
 
 class Coordinate:
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        self.x = int(x)
+        self.y = int(y)
 
     def __eq__(self, other):
         return (self.x == other.x) and (self.y == other.y)
@@ -16,4 +16,4 @@ class Coordinate:
         if not isinstance(other, Coordinate):
             raise Exception("Object must be a Coordinate")
         
-        return math.abs(self.x - other.x) + math.abs(self.y - other.y)
+        return abs(self.x - other.x) + abs(self.y - other.y)
