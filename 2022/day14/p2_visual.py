@@ -1,3 +1,8 @@
+from matplotlib import pyplot as plt
+from matplotlib.colors import LinearSegmentedColormap
+import time
+from matplotlib.animation import FuncAnimation
+
 class Coordinate:
     def __init__(self, x, y):
         self.x = int(x)
@@ -17,17 +22,23 @@ class Coordinate:
 class Cave:
     def __init__(self):
         # Laaaaaaazy
-        self.cave = [ ["."]*800 for i in range(800)]
+        self.cave = [[0]*800 for i in range(800)]
         self.width = 800
         self.height = 800
+        self.rested_sand = 0
 
-    def PrintMe(self):
-        start = False
-        for row in range(self.height):
-            line = ""
-            for col in range(400, 600):
-                line += self.cave[row][col]
-            print(line)
+
+
+    def PrintMe(self, sand=None):
+        print("oh")
+        if sand is not None:
+            temp = self.cave[sand.y][sand.x]
+            self.cave[sand.y][sand.x] = 2
+        self.plot.set_data([x[400:600] for x in self.cave])
+        if sand is not None:
+            self.cave[sand.y][sand.x] = temp
+        return self.plot
+        #self.fig.canvas.flush_events()
                 
     def CreateCave(self, filename):
         highest_y = 0
@@ -40,7 +51,7 @@ class Cave:
 
         # Slice off extra parts of cave
         self.cave = self.cave[:highest_y + 2]
-        self.cave.append(["#"] * self.width)
+        self.cave.append([1] * self.width)
         self.height = len(self.cave)       
 
     def AddRocks(self, path):
@@ -56,6 +67,28 @@ class Cave:
             last_coord = coord
 
         return highest_y
+        
+    def AnimateSand(self, drop_coord=None):
+        plt.ion()
+        plt.register_cmap(cmap=LinearSegmentedColormap.from_list(name='sand',colors=[[0.0,0.0,0.0,1.0],[1.0,0.0,0.0,1.0],[194.0,178.0,128.0,1.0]]))
+        plt.axis("off")
+        self.fig, self.ax = plt.subplots()
+        plt.figure(figsize = (10,10))
+        self.plot = plt.imshow([x for x in self.cave], interpolation='nearest',cmap="sand",vmin=0,vmax=2)
+        self.ln = self.ax.plot([],[])
+
+        if drop_coord is None:
+            drop_coord = Coordinate(500, 0)
+
+
+        ani = FuncAnimation(self.fig, self.Animate, 
+        interval=20, frames=1000, blit=True)
+        plt.show()
+
+    def Animate(self, w):
+        print("hwat")
+        self.CreateSand(Coordinate(500, 0))
+        return self.PrintMe()
         
 
     def FillWithSand(self, drop_coord=None):
@@ -74,7 +107,7 @@ class Cave:
     def CreateSand(self, drop_coord):
         rest_coord = None
         curr = Coordinate(drop_coord.x, drop_coord.y)
-        if self.cave[curr.y][curr.x] == "O":
+        if self.cave[curr.y][curr.x] == 2:
             return None
         while True:
             # print(curr.x, curr.y)
@@ -82,17 +115,18 @@ class Cave:
             if curr.y + 1 >= self.height:
                 # The abyss!
                 return None
-            if  self.cave[curr.y + 1][curr.x] == ".":
+            if  self.cave[curr.y + 1][curr.x] == 0:
                 curr.y += 1
-            elif self.cave[curr.y + 1][curr.x - 1] == ".":
+            elif self.cave[curr.y + 1][curr.x - 1] == 0:
                 curr.y += 1
                 curr.x -= 1
-            elif self.cave[curr.y + 1][curr.x + 1] == ".":
+            elif self.cave[curr.y + 1][curr.x + 1] == 0:
                 curr.y += 1
                 curr.x += 1
-            else:
+            else:                
                 rest_coord = curr
-                self.cave[curr.y][curr.x] = "O"
+                self.cave[curr.y][curr.x] = 2
+                self.PrintMe()
                 break
 
         return rest_coord
@@ -108,26 +142,30 @@ class Cave:
         y = c1.y
         if c1.IsVertical(c2):
             while y <= c2.y:
-                self.cave[y][x] = "#"
+                self.cave[y][x] = 1
                 y += 1
         else:
             while x <= c2.x:
-                self.cave[y][x] = "#"
+                self.cave[y][x] = 1
                 x += 1
 
 def CalculateSandFill(cave, filename):
     cave.CreateCave(filename)
+    cave.PrintMe()
     return cave.FillWithSand()
 
 cave = Cave()
+cave.CreateCave("input.in")
+cave.AnimateSand()
 
-#print(CalculateSandFill(cave, "input.in"))
 
 
+
+'''
 #importing libraries
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-
+import numpy as np
 
 fig = plt.figure()
 #creating a subplot 
@@ -156,3 +194,4 @@ def animate(i):
     
 ani = animation.FuncAnimation(fig, animate, interval=1000) 
 plt.show()
+'''
