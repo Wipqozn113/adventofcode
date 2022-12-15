@@ -28,10 +28,8 @@ def CreateSensors(filename):
             line = line.strip()
             matches = re.findall(r"-?\d+", line)
             beacon = Beacon(matches[2], matches[3])      
-            # Duplicate beacon     
-            for bc in beacons:
-                if beacon == bc:
-                    beacon = bc
+            if beacon in beacons:
+                pass # get the beacon somehow?
             sensor = Sensor(matches[0], matches[1], beacon)
             sensors.append(sensor)
             beacons.add(beacon)
