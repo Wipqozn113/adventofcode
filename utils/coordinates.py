@@ -1,12 +1,40 @@
 import math
 
-class Line:
-    def __init__(self, coord1, coord2):        
-        self.start = coord1 if coord1.x < coord2.x else coord2
-        self.end = coord1 if coord1.x >= coord2.x else coord2
+class HorizontalLine:
+    def __init__(self, coord1, coord2): 
+        if(coord1.y != coord2.y):
+            raise Exception("Horizatonal lines only!")
 
-    def JoinLines(self, line):
-        
+        c1 = Coordinate(coord1.x, coord1.y)
+        c2 = Coordinate(coord2.x, coord2.y)       
+        self.start = c1 if c1.x <= c2.x else c2
+        self.end = c1 if c1.x > c2.x else c2
+    
+    def __hash__(self):
+        return hash((self.start.__hash__(), self.end.__hash__()))
+
+    def CanJoin(self, other):
+        if self.start.y != other.start.y:
+            return False
+
+        # Liens Intersect
+        if other.start.x <= self.start.x <= other.end.x:
+            return True
+        if other.start.x <= self.end.x <= other.end.x:
+            return True
+
+        return False
+
+    def JoinLines(self, other):
+        if self.CanJoin(other):
+            # Extend Start and end of line as requried
+            if self.start.x > other.start.x:
+                self.start.x = other.start.x
+            if self.end.x < other.end.x:
+                self.end.x = other.end.x
+
+            # Delete Old Line
+            del(other)
 
 
 class Coordinate:
