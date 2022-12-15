@@ -27,17 +27,24 @@ class Cave:
         self.height = 800
         self.rested_sand = 0
 
+        plt.ion()
+        plt.register_cmap(cmap=LinearSegmentedColormap.from_list(name='sand',colors=[[0.0,0.0,0.0,1.0],[1.0,0.0,0.0,1.0],[194.0,178.0,128.0,1.0]]))
+        plt.axis("off")
+        self.fig, self.ax = plt.subplots()
+        plt.figure(figsize = (10,10))
+        self.plot = plt.imshow([x for x in self.cave], interpolation='nearest',cmap="sand",vmin=0,vmax=2)
+        self.ln = self.ax.plot([],[])
+
 
 
     def PrintMe(self, sand=None):
-        print("oh")
         if sand is not None:
             temp = self.cave[sand.y][sand.x]
             self.cave[sand.y][sand.x] = 2
         self.plot.set_data([x[400:600] for x in self.cave])
         if sand is not None:
             self.cave[sand.y][sand.x] = temp
-        return self.plot
+            plt.savefig("animation/sand{}-{}-{}.png".format(self.rested_sand, sand.x, sand.y))
         #self.fig.canvas.flush_events()
                 
     def CreateCave(self, filename):
@@ -81,8 +88,8 @@ class Cave:
             drop_coord = Coordinate(500, 0)
 
 
-        ani = FuncAnimation(self.fig, self.Animate, 
-        interval=20, frames=1000, blit=True)
+        #ani = FuncAnimation(self.fig, self.Animate, 
+        #interval=20, frames=1000, blit=True)
         plt.show()
 
     def Animate(self, w):
@@ -95,21 +102,22 @@ class Cave:
         if drop_coord is None:
             drop_coord = Coordinate(500, 0)
 
-        rested_sand = 0
+        self.rested_sand = 0
         while True:
             coord = self.CreateSand(drop_coord)
             if coord is None:
                 break
-            rested_sand += 1
+            self.rested_sand += 1
 
-        return rested_sand
+        return self.rested_sand
 
     def CreateSand(self, drop_coord):
         rest_coord = None
         curr = Coordinate(drop_coord.x, drop_coord.y)
-        if self.cave[curr.y][curr.x] == 2:
-            return None
+       # if self.cave[curr.y][curr.x] == 2:
+        #    return None
         while True:
+            self.PrintMe(curr)
             # print(curr.x, curr.y)
             # Don't bother checking X, since we're just going to force the Cave to be large enough
             if curr.y + 1 >= self.height:
@@ -126,7 +134,7 @@ class Cave:
             else:                
                 rest_coord = curr
                 self.cave[curr.y][curr.x] = 2
-                self.PrintMe()
+ 
                 break
 
         return rest_coord
@@ -155,8 +163,8 @@ def CalculateSandFill(cave, filename):
     return cave.FillWithSand()
 
 cave = Cave()
-cave.CreateCave("input.in")
-cave.AnimateSand()
+
+print(CalculateSandFill(cave, "input.in"))
 
 
 
