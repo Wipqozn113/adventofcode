@@ -10,6 +10,9 @@ class HorizontalLine:
         self.start = c1 if c1.x <= c2.x else c2
         self.end = c1 if c1.x > c2.x else c2
         
+    def Len(self):
+        return abs(self.start.x - self.end.x)
+
     # Trim a line to not exceed a boundry
     def Trim(self, startx, endx):
         if self.start.x < startx:
