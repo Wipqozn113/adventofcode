@@ -63,38 +63,6 @@ class Lines:
         self.lines[y] = lines
         return joined_line, joined 
 
-
-class Zone:
-    def __init__(self, centre,  radius):
-        self.centre = Coordinate(centre.x, centre.y)
-        self.radius = radius
-    
-    def CoordinatesCovered(self, set, row, limit, lines):
-        mn = 0
-        mx = limit
-        row_centre = Coordinate(self.centre.x, row)
-        row_distance = self.centre.ManhattenDistance(row_centre) 
-        # Row is too far away, so points are not inside this Zone
-       
-        if(row_distance > self.radius):
-            return set
-        
-        # Row is close enough to be contained within zone
-        col_length = 2 * (self.radius - row_distance) + 1
-        col_radius = math.floor(col_length / 2)
-        if (self.centre.x - col_radius < mn) and (self.centre.x + col_radius > mx):
-            return set
-        
-        start = Coordinate(max((mn,self.centre.x - col_radius)), row)
-        end = Coordinate(min((mx,self.centre.x + col_radius)), row)
-        line = HorizontalLine(start, end)
-        lines.AddLine(line)
-
-        return set        
-
-    def ContainsCoordinate(self, coordinate):
-        pass
-
 class Beacon:
     def __init__(self, x, y):
         self.coord = Coordinate(x, y)
@@ -112,8 +80,7 @@ class Sensor:
         self.beacon = beacon
         self.closest_beacon = beacon
         self.beacon_distance = self.coord.ManhattenDistance(beacon.coord)
-        self.beacon.sensors.append(self)
-        self.coverage = Zone(self.coord, self.beacon_distance)      
+        self.beacon.sensors.append(self) 
         self.rhombus = Rhombus(self.coord, self.beacon_distance)
 
     def GetLineAtRow(self, row, limit):
@@ -126,12 +93,6 @@ class Sensor:
 
         return line
 
-    def CalculateCoverage(self, set, row, limit, lines):
-        self.coverage.CoordinatesCovered(set, row, limit, lines)
-
-    def InsideImpossibleZone(self, coordinate):
-        return self.coverage.ContainsCoordinate(coordinate)
-
 def CreateSensors(filename):
     sensors = []
     beacons = []
@@ -140,19 +101,10 @@ def CreateSensors(filename):
             line = line.strip()
             matches = re.findall(r"-?\d+", line)
             beacon = Beacon(matches[2], matches[3])      
-            #if beacon in beacons:
-            #    pass # get the beacon somehow?
             sensor = Sensor(matches[0], matches[1], beacon)
             sensors.append(sensor)
-            beacons.append(beacon)
 
-    return (sensors, beacons)
-
-def ImpossiblePositions(sensors, row, set, limit, lines):
-    for sensor in sensors:
-        sensor.CalculateCoverage(set, row, limit, lines)
-    
-    return set
+    return sensors
 
 def FindDistressBeacon(sensors, limit):
     for row in range(limit + 1):
@@ -170,7 +122,7 @@ def FindDistressBeacon(sensors, limit):
 
 #filename, limit = ("test.in", 20)
 filename, limit = ("input.in", 4000000)
-sensors, beacons = CreateSensors(filename)
+sensors = CreateSensors(filename)
 beacon = FindDistressBeacon(sensors, limit)
 print("\n=============\n")
 print("Coordinates: ", beacon.coord.x, beacon.coord.y)
