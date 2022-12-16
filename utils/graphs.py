@@ -8,15 +8,15 @@ class Graph:
 
     def ResetNodes(self):
         for node in self.nodes:
-            node.explored = False
-            node.parent = None
+            node.Reset()
 
     def AddNode(self, node):
         self.nodes.add(node)
 
     def PopulateNodes(self, nodes):
-        self.nodes = set(nodes)
+        self.nodes = set(nodes)     
 
+  
     def FindShortestUnweightedStart(self, goal, starts):
         start = None
         shortest = None
@@ -136,8 +136,20 @@ class Node:
         self.parents = []
         self.explored = False
 
+    def AddChild(self, child):
+        self.children.append(child)
+
+    def Reset(self):
+        self.explored = False
+        self.parent = None
+        if self.obj is not None:
+            self.obj.Reset()
+
     def Distance(self, node):
         pass
+
+    def Action(self, result, limit):
+        return self.obj.Action(result, limit)
     
     @property
     def id(self):
