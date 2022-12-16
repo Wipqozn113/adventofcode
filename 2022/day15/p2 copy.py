@@ -12,21 +12,6 @@ class Lines:
     def __init__(self):
         self.lines = {}
 
-    def Gap(self, y):
-        if y not in self.lines:
-            return None
-        if(len(self.lines[y]) < 2):
-            return None
-
-        ln1 = self.lines[y].pop()
-        ln2 = self.lines[y].pop()
-        if ln1.start.x < ln2.start.x:
-            x = ln1.end.x + 1
-        else:
-            x = ln1.start.x - 1
-
-        return Beacon(x, y)       
-
     def AddLine(self, line):
         y = line.start.y
         # Create set for row if doens't exist
@@ -37,7 +22,7 @@ class Lines:
             return
         
         # Keep joining lines until all lines are joiend
-        ln = line        
+        ln = line
         while True:
             ln, joined = self.JoinLines(ln, y)
             if not joined or ln in self.lines[y]:                
@@ -113,18 +98,8 @@ class Sensor:
         self.closest_beacon = beacon
         self.beacon_distance = self.coord.ManhattenDistance(beacon.coord)
         self.beacon.sensors.append(self)
-        self.coverage = Zone(self.coord, self.beacon_distance)      
+        #self.coverage = Zone(self.coord, self.beacon_distance)      
         self.rhombus = Rhombus(self.coord, self.beacon_distance)
-
-    def GetLineAtRow(self, row, limit):
-        distance_y = row - self.coord.y
-        line = self.rhombus.LineFromCentreY(distance_y)
-        if line is None:
-            return None
-
-        line.Trim(0, limit)
-
-        return line
 
     def CalculateCoverage(self, set, row, limit, lines):
         self.coverage.CoordinatesCovered(set, row, limit, lines)
@@ -154,24 +129,38 @@ def ImpossiblePositions(sensors, row, set, limit, lines):
     
     return set
 
-def FindDistressBeacon(sensors, limit):
+def FindDistressBeacon(sensors, limit, lines):
+    positions = set()
     for row in range(limit + 1):
-        if row % 100000 == 0:
-            print("Row ", row)
-        lines = Lines()
-        for sensor in sensors:
-            line = sensor.GetLineAtRow(row, limit)
-            if line is not None:
-                lines.AddLine(line)
-        gap = lines.Gap(row)
-        if gap is not None:
-            return gap # gap is beacon      
-      
+        if(row % 10000 == 0):
+            print("On Row ", row)
+        ImpossiblePositions(sensors, row, positions, limit, lines)
 
-#filename, limit = ("test.in", 20)
-filename, limit = ("input.in", 4000000)
+    for y in range(limit):
+        if(y % 10000 == 0):
+            print("On Y ", y)
+
+        # Two lines means there's a possible space
+        
+        if len(lines.lines[y]) > 1:
+            ln1 = lines.lines[y].pop()
+            ln2 = lines.lines[y].pop()
+            if ln1.start.x < ln2.start.x:
+                x = ln1.end.x + 1
+            else:
+                x = ln1.start.x - 1
+            break            
+            
+    return Beacon(x, y)
+
+        
+
+
+lines = Lines()
+filename, limit = ("test.in", 20)
+#filename, limit = ("input.in", 4000000)
 sensors, beacons = CreateSensors(filename)
-beacon = FindDistressBeacon(sensors, limit)
+beacon = FindDistressBeacon(sensors, limit, lines)
 print("\n=============\n")
 print("Coordinates: ", beacon.coord.x, beacon.coord.y)
 print("Tuning Frequency:", beacon.TuningFrequency())

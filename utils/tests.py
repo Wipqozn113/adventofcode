@@ -70,4 +70,21 @@ class Hill:
             height = 'z'
         return ord(height)  
 
-TestShortestPath()
+#TestShortestPath()
+
+from coordinates import Coordinate, HorizontalLine, Rhombus
+
+def TestLineJoin():    
+    start = Coordinate(0, 9)
+    end = Coordinate(20, 9)
+    ln1 =  HorizontalLine(start, end)
+    st = Coordinate(13, 9)
+    en = Coordinate(19, 9)
+    ln2 =  HorizontalLine(st, en)
+    ln1.PrintMe()
+    print(ln2.CanJoin(ln1))
+    ln1.JoinLines(ln2)
+    ln1.PrintMe()
+
+TestLineJoin()
+    
