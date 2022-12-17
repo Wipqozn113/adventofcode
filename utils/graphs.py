@@ -16,7 +16,14 @@ class Graph:
     def PopulateNodes(self, nodes):
         self.nodes = set(nodes)     
 
-  
+    def FindAllShortestPaths(self):
+        for start in self.nodes:
+            for target in self.nodes:
+                if start is not target:
+                    distance = self.UnweightedShortestPath(target, start)
+                    start.distance[target.Key] = distance
+                    self.ResetNodes()
+   
     def FindShortestUnweightedStart(self, goal, starts):
         start = None
         shortest = None
@@ -135,6 +142,12 @@ class Node:
         self.parent = None
         self.parents = []
         self.explored = False
+        self.distance = {}
+    
+    @property
+    def Key(self):
+        if self.obj is not None:
+            return self.obj.Key
 
     def AddChild(self, child):
         self.children.append(child)
