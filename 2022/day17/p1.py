@@ -117,6 +117,7 @@ class Cave:
                 self.cave = [row]
             else:
                 self.cave = [row] + self.cave        
+        self.cave_height = len(self.cave)
 
     def CalculateHeight(self, rocks=2022):
         for n in range(rocks):
@@ -138,7 +139,7 @@ class Cave:
         rock_position = Coordinate(2, 0)
 
         while True:
-            if self.MoveRock(rock, rock_position):
+            if not self.MoveRock(rock, rock_position):
                 break
 
     def AdjustHeight(self):
@@ -199,7 +200,7 @@ class Cave:
         x,y = position.x, position.y
 
         # Rock against wall. Cannot be moved.
-        if position.x == self.width:
+        if position.x + rock.width == self.width:
             return False
 
         self.PrintMe()
@@ -232,8 +233,9 @@ class Cave:
         rows = rock.height
         x,y = position.x, position.y
 
+        print(self.cave_height)
         # Rock against floor. Cannot be moved.
-        if position.y == self.cave_height - 1:
+        if position.y + rock.height == self.cave_height:
             return False
 
         self.PrintMe()
@@ -248,6 +250,7 @@ class Cave:
         # Move rock down
         for xd in range(cols):
             for yd in range(rows):
+                print(self.cave[y + yd + 1][x + xd].type, self.cave[y + yd][x + xd].type)
                 self.cave[y + yd + 1][x + xd] = self.cave[y + yd][x + xd]
 
         # Clear out last bit of rock
