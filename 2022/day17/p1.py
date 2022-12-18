@@ -3,6 +3,7 @@ import sys
 import os
 import re 
 import math
+from file_read_backwards import FileReadBackwards
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
@@ -100,6 +101,26 @@ class Cave:
         self.tower_height = 0
         self.cave_height = 0
 
+    def FindError(self):
+        y = self.cave_height - 1
+        with FileReadBackwards("test.out", encoding="utf-8") as frb:
+            for line in frb:
+                if line[0] == "+":
+                    continue
+                line = line.strip().strip("|")
+                for x in range(self.width):
+                    if self.cave[y][x].type != line[x]:
+                        print("BUG CITY BAAAABBBYYY")
+                        me = ""
+                        for x in range(self.width):
+                            me += self.cave[y][x].type
+                        print(y)
+                        print(me)
+                        print(line)
+                        exit()
+                y -= 1
+
+
     def PrintMe(self, pause=True, debug=False):
         if not debug:
             return
@@ -131,7 +152,7 @@ class Cave:
             self.DropRock(rock)
             self.AdjustHeight()
             self.PrintMe()
-        self.PrintMe(debug=True)
+
         return self.tower_height  
 
     def DropRock(self, rock):
@@ -310,7 +331,7 @@ airflow = CreateAirFlow("test.in")
 rocks = CreateRocks()
 cave = Cave(airflow, rocks, 7)
 print(cave.CalculateHeight(2022))
-
+cave.FindError()
 
 
 
