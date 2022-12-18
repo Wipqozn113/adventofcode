@@ -10,8 +10,24 @@ class Coordinate3D:
     def Key(self):
         return self.__hash__()
 
+    @property
+    def LargestCoord(self):
+        return max(self.x, self.y, self.z)
+
     def AdjCoordinates(self):
-        pass
+        adjcoords = []
+        x,y,z = self.x,self.y,self.z
+
+        adjcoords.append(Coordinate3D(x+1,y,z))
+        adjcoords.append(Coordinate3D(x-1,y,z))
+
+        adjcoords.append(Coordinate3D(x,y+1,z))
+        adjcoords.append(Coordinate3D(x,y-1,z))
+
+        adjcoords.append(Coordinate3D(x,y,z+1))
+        adjcoords.append(Coordinate3D(x,y,z-1))        
+
+        return adjcoords
 
     def AreAdj(self, other):
         sub = self - other
