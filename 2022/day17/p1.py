@@ -11,7 +11,7 @@ from utils.coordinates import Coordinate, HorizontalLine, Rhombus
 
 class AirFlow:
     def __init__(self, pattern):
-        self.pattern = list(pattern)
+        self.pattern = list(pattern.strip())
         self.n = 0
         self.len = len(self.pattern)
         self.pat = ""
@@ -117,6 +117,9 @@ class Cave:
                         print(y)
                         print(me)
                         print(line)
+                        for x in range(self.width):
+                            if self.cave[y][x].rock is not None:
+                                print(self.cave[y][x].rock.name)
                         exit()
                 y -= 1
 
