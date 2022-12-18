@@ -13,9 +13,11 @@ class AirFlow:
         self.pattern = list(pattern)
         self.n = 0
         self.len = len(self.pattern)
-    
+        self.pat = ""
+
     def Next(self):
         flow = self.pattern[self.n]
+        self.pat += flow
         self.n += 1
 
         # Reset pattern
@@ -98,7 +100,10 @@ class Cave:
         self.tower_height = 0
         self.cave_height = 0
 
-    def PrintMe(self, pause=True):
+    def PrintMe(self, pause=True, debug=False):
+        if not debug:
+            return
+        print("Tower Height: ", self.tower_height, "Cave height: ", self.cave_height)
         for r in self.cave:
             row = ""
             for c in r:
@@ -108,7 +113,7 @@ class Cave:
             input("Any key to continue")
 
     def ExpandCave(self, rock):
-        expand_by = (3 + rock.height) - (self.cave_height - self.tower_height) 
+        expand_by = 3 + rock.height
         for row in range(expand_by):
             row = []
             for col in range(self.width):
@@ -125,8 +130,8 @@ class Cave:
             self.ExpandCave(rock)    
             self.DropRock(rock)
             self.AdjustHeight()
-            self.PrintMe()  
-
+            self.PrintMe()
+        self.PrintMe(debug=True)
         return self.tower_height  
 
     def DropRock(self, rock):
@@ -135,7 +140,6 @@ class Cave:
         for row in rock.shape:
             self.cave[r][2:2+rock.width] = row
             r += 1
-        self.PrintMe()
         rock_position = Coordinate(2, 0)
 
         while True:
@@ -143,15 +147,28 @@ class Cave:
                 break
 
     def AdjustHeight(self):
+        stop = False
         self.cave_height = len(self.cave)
         for y in range(self.cave_height):
             for x in range(self.cave_width):
                 if self.cave[y][x].type == "#":
                     self.tower_height = self.cave_height - y
-                    return True
+                    stop = True
+                    break
+            if stop:
+                break
+
+        if self.tower_height < self.cave_height:
+            self.TrimTop()        
+
+    def TrimTop(self):
+        trim = self.cave_height - self.tower_height
+        self.cave = self.cave[trim:]
+        self.cave_height = len(self.cave)
     
     def MoveRock(self, rock, position):
         # First airflow movement
+
         airflow = self.airflow.Next()
         if airflow == "<":
             self.MoveRockLeft(rock, position)
@@ -173,15 +190,18 @@ class Cave:
         self.PrintMe()
 
         # Check if the rock is blocked by another rock
-        for xd in range(-1, cols):
+        for xd in range(cols):
             for yd in range(rows):
                 # If any point is blocked, we can't move the rock
                 if self.cave[y + yd][x + xd].IsBlockedBy(self.cave[y + yd][x + xd - 1]):
                     return False
 
         # Move rock to the left
-        for xd in range(-1, cols):
+        for xd in range(cols):
             for yd in range(rows):
+                #if rock.name == "L":
+                #    self.PrintMe(debug=True)
+                #    print(x, self.cave[y + yd][x + xd - 1].type, self.cave[y + yd][x + xd].type)
                 self.cave[y + yd][x + xd - 1] = self.cave[y + yd][x + xd]
 
         # Clear out last bit of rock
@@ -213,9 +233,9 @@ class Cave:
                     return False
 
         # Move rock to the right
-        for xd in range(cols):
+        for xd in range(cols, 0, -1):
             for yd in range(rows):
-                self.cave[y + yd][x + xd + 1] = self.cave[y + yd][x + xd]
+                self.cave[y + yd][x + xd] = self.cave[y + yd][x + xd - 1]
        
         # Clear out last bit of rock
         for yd in range(rows):
@@ -233,7 +253,6 @@ class Cave:
         rows = rock.height
         x,y = position.x, position.y
 
-        print(self.cave_height)
         # Rock against floor. Cannot be moved.
         if position.y + rock.height == self.cave_height:
             return False
@@ -242,20 +261,20 @@ class Cave:
 
         # Check if the rock is blocked by another rock
         for xd in range(cols):
-            for yd in range(rows):
+            for yd in range(rows, 0, -1):
                 # If any point is blocked, we can't move the rock
-                if self.cave[y + yd][x + xd].IsBlockedBy(self.cave[y + yd + 1][x + xd]):
+                if self.cave[y + yd - 1][x + xd].IsBlockedBy(self.cave[y + yd][x + xd]):
                     return False
 
         # Move rock down
         for xd in range(cols):
-            for yd in range(rows):
-                print(self.cave[y + yd + 1][x + xd].type, self.cave[y + yd][x + xd].type)
-                self.cave[y + yd + 1][x + xd] = self.cave[y + yd][x + xd]
+            for yd in range(rows, 0, -1):
+                self.cave[y + yd][x + xd] = self.cave[y + yd - 1][x + xd]
 
         # Clear out last bit of rock
         for xd in range(cols):
             self.cave[y][x + xd] = Point(".", None)
+
 
         self.PrintMe()
 
