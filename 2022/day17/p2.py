@@ -422,6 +422,8 @@ class Cave:
 
     def CalculateHeight(self, rocks=2022):
         for n in range(rocks):
+            if n % 10000 == 0:
+                print(n)
             rock = self.rocks.Next()
             self.ExpandCave(rock)    
             self.DropRock(rock)
@@ -503,10 +505,10 @@ def CreateAirFlow(filename):
             #print(airflow.pattern)
             return airflow
 
-airflow = CreateAirFlow("input.in")
+airflow = CreateAirFlow("test.in")
 rocks = CreateRocks()
 cave = Cave(airflow, rocks, 7)
-print(cave.CalculateHeight(2022))
+print(cave.CalculateHeight(1000000000000))
 #cave.PrintMe(debug=True)
 #cave.FindError()
 #print(cave.PrintMe(debug=True))
