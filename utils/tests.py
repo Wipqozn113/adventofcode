@@ -1,4 +1,5 @@
 from graphs import Node, Graph
+from colorama import Fore, Style
 
 def TestShortestPath():
     width = 8
@@ -86,5 +87,7 @@ def TestLineJoin():
     ln1.JoinLines(ln2)
     ln1.PrintMe()
 
-TestLineJoin()
+my_str = f"{Fore.BLUE}Hello, {Style.RESET_ALL} guys. {Fore.RED} I should be red."
+
+print(my_str)
     
