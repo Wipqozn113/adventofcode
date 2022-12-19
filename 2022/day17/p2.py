@@ -420,6 +420,19 @@ class Cave:
                 self.cave = [row] + self.cave        
         self.cave_height = len(self.cave)
 
+    def FindCycleLength(self):
+        heights = []
+        n = 0
+        while True:            
+            rock = self.rocks.Next()
+            self.ExpandCave(rock)    
+            self.DropRock(rock)
+            self.AdjustHeight()
+            heights.append((n,self.tower_height))
+            print(n)
+
+        return self.tower_height  
+
     def CalculateHeight(self, rocks=2022):
         for n in range(rocks):
             if n % 10000 == 0:
@@ -508,7 +521,9 @@ def CreateAirFlow(filename):
 airflow = CreateAirFlow("test.in")
 rocks = CreateRocks()
 cave = Cave(airflow, rocks, 7)
-print(cave.CalculateHeight(1000000000000))
+cycle = len(airflow.pattern)
+cave.FindCycleLength()
+#print(cave.CalculateHeight(1000000000000))
 #cave.PrintMe(debug=True)
 #cave.FindError()
 #print(cave.PrintMe(debug=True))
