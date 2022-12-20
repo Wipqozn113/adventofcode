@@ -353,6 +353,8 @@ class Cave:
         self.rocks = rocks
         self.tower_height = 0
         self.cave_height = 0
+        self.cycle = []
+        self.cycle_height = 0
 
     @property
     def height(self):
@@ -421,52 +423,62 @@ class Cave:
                 self.cave = [row] + self.cave        
         self.cave_height = len(self.cave)
 
-    def FindCycleLength(self):
-        heights = []
+    def CalcHeight(self, rocks=1000000000000):
+        height_diffs = []
+        last_height = 0
+        cn = 0
+        cycle = None
         n = 0
-        while True:            
+        while True:      
+            print(n, len(self.airflow.pattern))
             rock = self.rocks.Next()
             self.ExpandCave(rock)    
             self.DropRock(rock)
-            self.AdjustHeight()                
-            if self.IsCycle(heights):
-                print(n)
-                exit("what")
-            heights.append((n,self.tower_height))
-            n += 1
-            if n == 10000:
-                break
-        
-        return self.tower_height  
+            self.AdjustHeight()
+            height_diffs.append(self.tower_height - last_height)
+            last_height = self.tower_height 
+            cycle = self.CaptureCycle(height_diffs)   
+            n += 1 
+            if cycle is not None:
+                break    
+     
+        cyclesum = sum(cycle)
+        cycle_length = len(cycle)
+        rocks_left = rocks - n
+        mult = math.floor(rocks_left / cycle_length)
+        extra = rocks_left % cycle_length
+
+        return self.tower_height + (cyclesum * mult) + sum(cycle[:extra])
     
-    def IsCycle(self, heights):
-        l = len(heights)
-        if l < 4 or l % 2 != 0:
-            return False
-        print("um", l)
-        ind = int(l/2)
-        height1 = heights[:ind]
-        height2 = heights[ind:]
-        ht = heights[:]
-        while True:            
-            for n in range(len(height1)):
-                if n == 0:
-                    continue
-                if height2[n][1] - height2[n-1][1] == height1[n][1] - height1[n-1][1]:
-                    continue
-                else:
-                    ht = heights[2:]
-                    if len(ht) == 0:
-                        return False
-                    ind = int(len(ht)/2)
-                    height1 = heights[:ind]
-                    height2 = heights[ind:]
-            return True
+    def CaptureCycle(self, height_diffs):
+        if(len(height_diffs)) < len(self.airflow.pattern):
+            return
+
+        is_cycle = False
+        diffs = height_diffs[:]
+        for count in range(len(height_diffs)):            
+            idx = int(len(diffs) / 2)
+            diff1 = diffs[idx:]
+            diff2 = diffs[:idx]
+
+            if(len(diff1) != len(diff2)):     
+                diffs = diffs[1:]
+                continue
+
+            iscycle = True
+            for n in range(len(diff1)):
+                if diff1[n] != diff2[n]:                    
+                    iscycle = False
+
+            diffs = diffs[1:]
+            if len(diff1) < len(self.airflow.pattern) - 10:
+                return
+            if iscycle:
+                return diff1
+            
 
     def CalculateHeight(self, rocks=2022):
         for n in range(rocks):
-            if n % 10000 == 0:
-                print(n)
             rock = self.rocks.Next()
             self.ExpandCave(rock)    
             self.DropRock(rock)
@@ -548,11 +560,11 @@ def CreateAirFlow(filename):
             #print(airflow.pattern)
             return airflow
 
-airflow = CreateAirFlow("test.in")
+airflow = CreateAirFlow("input.in")
 rocks = CreateRocks()
 cave = Cave(airflow, rocks, 7)
 cycle = len(airflow.pattern)
-cave.FindCycleLength()
+print(cave.CalcHeight())
 #print(cave.CalculateHeight(1000000000000))
 #cave.PrintMe(debug=True)
 #cave.FindError()
