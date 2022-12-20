@@ -1,6 +1,43 @@
 import queue
 import math
 
+class StateGraph:
+    def __init__(self, root=None):
+        self.root = root
+        self.curr = root
+        self.states = set()
+
+    def FindBestState(self):
+        pass
+
+    def AddState(self, state, parent=None):
+        if parent is None:
+            parent = self.curr
+        self.states.add(state)
+        parent.AddChild(state)
+        self.curr = state
+
+    def DFS(self, root=None):
+        if root is None:
+            root == root
+
+class Edge:
+    def __init__(self, parent, child):
+        self.parent = parent
+        self.child = child
+
+class State:
+    children = []
+    edges = []
+    discovered = False
+    
+    def AreEqual(self,other):
+        raise NotImplementedError("AreEqual must be implemented!")
+    
+    def AddChild(self, other):
+        self.children.append(other)
+
+
 class Graph:
     def __init__(self, root=None):
         self.root = root
@@ -15,6 +52,9 @@ class Graph:
 
     def PopulateNodes(self, nodes):
         self.nodes = set(nodes)     
+    
+    def DFS(self, root=None):
+        pass
 
     def FindAllShortestPaths(self):
         for start in self.nodes:

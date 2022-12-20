@@ -3,6 +3,7 @@ import sys
 import os
 import re 
 import math
+import numpy
 from file_read_backwards import FileReadBackwards
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
@@ -427,11 +428,40 @@ class Cave:
             rock = self.rocks.Next()
             self.ExpandCave(rock)    
             self.DropRock(rock)
-            self.AdjustHeight()
+            self.AdjustHeight()                
+            if self.IsCycle(heights):
+                print(n)
+                exit("what")
             heights.append((n,self.tower_height))
-            print(n)
-
+            n += 1
+            if n == 10000:
+                break
+        
         return self.tower_height  
+    
+    def IsCycle(self, heights):
+        l = len(heights)
+        if l < 4 or l % 2 != 0:
+            return False
+        print("um", l)
+        ind = int(l/2)
+        height1 = heights[:ind]
+        height2 = heights[ind:]
+        ht = heights[:]
+        while True:            
+            for n in range(len(height1)):
+                if n == 0:
+                    continue
+                if height2[n][1] - height2[n-1][1] == height1[n][1] - height1[n-1][1]:
+                    continue
+                else:
+                    ht = heights[2:]
+                    if len(ht) == 0:
+                        return False
+                    ind = int(len(ht)/2)
+                    height1 = heights[:ind]
+                    height2 = heights[ind:]
+            return True
 
     def CalculateHeight(self, rocks=2022):
         for n in range(rocks):
