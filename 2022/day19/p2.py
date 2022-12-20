@@ -26,6 +26,14 @@ class Cost:
         state.clay -= self.clay
         state.obsidian -= self.obsidian
 
+    def NeverAfford(self, state, time):
+        ore = (state.ore_robots * time) + state.ore
+        clay = (state.clay_robots * time) + state.clay
+        obsidian = (state.obsidian_robots * time) + state.obsidian
+
+        # will never have enough resources to afford this
+        return (self.ore > ore) and (self.clay > clay) and (self.obsidian > obsidian)
+
 
 class Blueprint:
     max_ore = 0
@@ -40,6 +48,18 @@ class Blueprint:
         self.obsidian = self.ObsidianCost(inp[2])
         self.geode = self.GeodeCost(inp[3])
         self.final_state = None
+
+    def CanNeverAffordGeode(self, state, time):
+        return self.ore.NeverAfford(state, time)
+
+    def CanNeverAffordObs(self, state, time):
+        return self.obsidian.NeverAfford(state, time)
+
+    def CanNeverAffordClay(self, state, time):
+        return self.clay.NeverAfford(state, time)
+
+    def CanNeverAffordGeode(self, state, time):
+        return self.clay.NeverAfford(state, time)
 
     def PrintMe(self):
         print("Ore: {} Clay: {} Obsidian: {} Geode: {}".format(self.ore.costs(), self.clay.costs(), self.obsidian.costs(), self.geode.costs()))
@@ -250,7 +270,7 @@ class RoboState:
     def Saving(self):
         return self.build_geode or self.build_obs or self.build_clay or self.build_ore
 
-    def BuildGeode(self, blueprint, remaining_depth=0):
+    def BuildGeode(self, blueprint, remaining_time=0):
         # Already tryin to build
         if self.build_geode:
             return True
@@ -263,9 +283,13 @@ class RoboState:
         if self.obsidian_robots == 0:
             return False
 
+        # Not enough time to afford one of these anyways
+        if blueprint.CanNeverAffordGeode(self, remaining_time):
+            return False
+
         return True
 
-    def BuildObs(self, blueprint):
+    def BuildObs(self, blueprint, remaining_time=0):
         # Already tryin to build
         if self.build_obs:
             return True
@@ -282,9 +306,13 @@ class RoboState:
         if self.obsidian_robots > blueprint.max_obsidian:
             return False
 
+        # Not enough time to afford one of these anyways
+        if blueprint.CanNeverAffordObs(self, remaining_time):
+            return False
+
         return True
 
-    def BuildClay(self, blueprint):
+    def BuildClay(self, blueprint, remaining_time=0):
         # Already tryin to build
         if self.build_clay:
             return True
@@ -297,9 +325,13 @@ class RoboState:
         if self.clay_robots > blueprint.max_clay:
             return False
 
+        # Not enough time to afford one of these anyways
+        if blueprint.CanNeverAffordClay(self, remaining_time):
+            return False
+
         return True
 
-    def BuildOre(self, blueprint):
+    def BuildOre(self, blueprint, remaining_time=0):
         # Already tryin to build
         if self.build_ore:
             return True
@@ -310,6 +342,10 @@ class RoboState:
 
         # We don't need anymore clay bots
         if self.ore_robots > blueprint.max_ore:
+            return False
+
+        # Not enough time to afford one of these anyways
+        if blueprint.CanNeverAffordGeode(self, remaining_time):
             return False
 
         return True
