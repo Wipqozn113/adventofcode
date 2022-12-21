@@ -149,7 +149,7 @@ class RobotFactory:
         # Otherwise, save up
         return True
 
-    def StartRobot(self, state, depth):        
+    def StartRobot(self, state, depth, time_left):        
         states = []
 
         if self.blueprint.CanAffordGeode(state):
@@ -160,13 +160,13 @@ class RobotFactory:
 
             return states
 
-        if state.BuildGeode(self.blueprint):
+        if state.BuildGeode(self.blueprint, time_left):
             if not state.build_geode:
                 nstate = state.Copy()
                 nstate.build_geode = True    
                 states.append(nstate)      
         
-        if state.BuildObs(self.blueprint):
+        if state.BuildObs(self.blueprint, time_left):
             if not state.build_obs:
                 nstate = state.Copy()
                 nstate.build_obs = True
@@ -178,7 +178,7 @@ class RobotFactory:
             elif not state.build_obs:
                 states.append(nstate)
 
-        if state.BuildClay(self.blueprint):
+        if state.BuildClay(self.blueprint, time_left):
             if not state.build_clay:
                 nstate = state.Copy()
                 nstate.build_clay = True
@@ -190,7 +190,7 @@ class RobotFactory:
             elif not state.build_clay:
                 states.append(nstate)
         
-        if state.BuildOre(self.blueprint):
+        if state.BuildOre(self.blueprint, time_left):
             if not state.build_ore:
                 nstate = state.Copy()
                 nstate.build_ore = True
@@ -459,7 +459,7 @@ class Node:
 
         #print(self.depth)
         max_geodes = self.state.geodes
-        states = self.robotfactory.StartRobot(self.state, self.depth)
+        states = self.robotfactory.StartRobot(self.state, self.depth, self.graph.max_depth - self.depth)
 
         # No longer the best, so don't bother going on
         if not self.graph.IsLowestState(self.state, self.depth):
@@ -480,7 +480,7 @@ class Node:
         return max_geodes
 
     def CreateChild(self, state):
-        if self.graph.IsLowestState(state, self.depth + 1, True):
+        if self.graph.IsLowestState(state, self.depth + 1, True) and self.graph.CanOutPace(state, self.depth):
             node = Node(state.Copy(), self.robotfactory, self.depth + 1, self.max_depth, self.graph)
             self.children.append(node)
             return node
@@ -496,6 +496,7 @@ class Graph:
         self.state_dict = {}
         self.best_geo = {}
         self.root = Node(self.start_state, self.robot_factory, 0, self.max_depth, self)
+        self.geo_tracker = {}
 
     def IsHighestGeoDepth(self, state, depth, geodes):
         if depth not in self.best_geo:
@@ -506,6 +507,29 @@ class Graph:
             return True
 
         return False
+
+    def MaxGeodes(self, geo, time, bots=0):
+        mx = (time * (time + 1)) / 2
+
+        return geo + (mx - (bots * (bots + 1)) / 2)
+
+    def MinGeodes(self, geo, time, bots=0):
+        return geo + (time * bots)
+
+    def CanOutPace(self, state, depth):
+        if depth not in self.geo_tracker:
+            self.geo_tracker[depth] = (state.geodes, state.geode_robots)
+            return True
+
+        md = self.max_depth
+        for dpth, geo in self.geo_tracker.items():
+            geos = geo[0]
+            robos = geo[1]
+
+            if self.MaxGeodes(state.geodes, md - depth, state.geode_robots) > self.MinGeodes(geos, md - dpth, robos):
+                return True
+
+            return False
 
     def IsLowestState(self, state, depth, fail_equality=False):
         # Unseen state. Automatically lowest.
