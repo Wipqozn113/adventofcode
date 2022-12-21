@@ -106,7 +106,7 @@ def DiscoverHumnNumber(monkeys):
     eqY = equations[0] if 'x' not in equations[0] else equations[1]
     eqX = eqX[1:]
     eqY = eqY[:-1]
-    eqX += "-{}".format(eqY)
+    eqX += "-({})".format(eqY)
     expr = parse_expr(eqX)
     sol = solve(expr)
 
