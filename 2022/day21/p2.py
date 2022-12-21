@@ -22,10 +22,10 @@ class Monkey:
             self.mon1 = monkeys[self.mon1name]
             self.mon2 = monkeys[self.mon2name]
 
-    def CreateFullJob(self):
-        return self.JobsToString()
+    def CreateFullJob(self, reduce=True):
+        return self.JobsToString(reduce)
 
-    def JobsToString(self):
+    def JobsToString(self, reduce=True):
         if self.name == "humn":
             return "x"
 
@@ -35,6 +35,12 @@ class Monkey:
         mon1 = self.mon1.JobsToString()
         mon2 = self.mon2.JobsToString()
         job = "({} {} {})".format(mon1, self.op, mon2)
+
+        try:
+            jb = eval(job)
+            job = str(jb)
+        except:
+            pass
 
         return job
 
@@ -87,15 +93,25 @@ def BruteForceHumnNumber(monkeys):
             return num
         num += 1
 
-# Because fucking syntax error annoyance
+# If syntax error, can just use this:
 # https://www.mathpapa.com/algebra-calculator.html
 def DiscoverHumnNumber(monkeys):
     root = monkeys["root"]
     equation = root.CreateFullJob()
+    print("\nEquation")
+    print("===========")
+    print(equation)
     equations = equation.split("=")
     eqX = equations[0] if 'x' in equations[0] else equations[1]
+    eqY = equations[0] if 'x' not in equations[0] else equations[1]
+    eqX = eqX[1:]
+    eqY = eqY[:-1]
+    eqX += "-{}".format(eqY)
     expr = parse_expr(eqX)
     sol = solve(expr)
+
+    print("\n\nAnswer")
+    print("==========")
     print(sol[0])
 
 monkeys = CreateMonkeys("input.in")
