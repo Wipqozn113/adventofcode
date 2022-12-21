@@ -3,7 +3,7 @@ import sys
 import os
 import re 
 import math
-from file_read_backwards import FileReadBackwards
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
