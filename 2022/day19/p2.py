@@ -438,10 +438,13 @@ class Node:
         #     geo, sta = self.graph.best_geo[self.depth]
         #    if self.state.EqualRobots(sta):                
         #        return self.state.geodes            
-
+        if self.state.geodes > self.graph.best_geode:
+            self.graph.best_geode = self.state.geodes
 
         # At maximum depth, so stop crawling
         if self.max_depth == self.depth:
+            if self.state.geodes > self.graph.best_geode:
+                self.graph.best_geode = self.state.geodes
             return self.state.geodes
 
         # We've saving still, so yolo swag town
@@ -450,6 +453,8 @@ class Node:
             while state.StillSaving(self.graph.blueprint):
                 # At maximum depth, so stop crawling
                 if self.max_depth == state.depth:
+                    if self.state.geodes > self.graph.best_geode:
+                        self.graph.best_geode = self.state.geodes
                     return state.geodes
                 state.depth += 1
                 state.ore += state.ore_robots
@@ -497,6 +502,7 @@ class Graph:
         self.best_geo = {}
         self.root = Node(self.start_state, self.robot_factory, 0, self.max_depth, self)
         self.geo_tracker = {}
+        self.best_geode = 0
 
     def IsHighestGeoDepth(self, state, depth, geodes):
         if depth not in self.best_geo:
@@ -517,10 +523,12 @@ class Graph:
         return geo + (time * bots)
 
     def CanOutPace(self, state, depth):
-        if depth not in self.geo_tracker:
-            self.geo_tracker[depth] = (state.geodes, state.geode_robots)
+        if self.best_geode == 0:
             return True
 
+        return self.MaxGeodes(state.geodes, self.max_depth- depth, state.geode_robots) > self.best_geode
+
+        """
         md = self.max_depth
         for dpth, geo in self.geo_tracker.items():
             geos = geo[0]
@@ -530,6 +538,7 @@ class Graph:
                 return True
 
             return False
+        """
 
     def IsLowestState(self, state, depth, fail_equality=False):
         # Unseen state. Automatically lowest.
@@ -573,7 +582,7 @@ def Run(blueprints, max_depth=32):
         ql_sum *= graph.DFS()
     return ql_sum
 
-blueprints = CreateBlueprints("input.in")
+blueprints = CreateBlueprints("test.in")
 ql_sum = Run(blueprints)
 print("=======")
 print(ql_sum)
