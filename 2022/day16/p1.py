@@ -256,7 +256,7 @@ def FuckingAround(valves, valve_cave):
 
 
 
-filename = "input.in"
+filename = "test.in"
 valves = CreateValves(filename)
 graph = CreateGraph(filename, valves)      
 valve_cave = Valves(valves, graph)
