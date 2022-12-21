@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GGlkRywwRNlmKH1mLyWFTuS19OL8sWzX1msXf4zrajD1lLrSdBAS4YspOw8G9HkRDwnEKs9OFzeSxoIXv4JE3Q==",
+  "dgSpecHash": "C4ldQkozAnAXFX+8edMPMC7layPXU0nt1iLccFreR5L2PlO7HrWUbiQ3V5oKWkSLFYMhr7S5g8UhwoD1MuC4Kg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\bcave\\source\\repos\\adventofcode\\adventofcode\\adventofcode.csproj",
+  "projectFilePath": "C:\\Users\\bcave\\source\\repos\\adventofcode\\adventofcode\\day19.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

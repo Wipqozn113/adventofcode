@@ -1,0 +1,15 @@
+C:\Users\bcave\source\repos\adventofcode\adventofcode\bin\Debug\net6.0\day19.exe
+C:\Users\bcave\source\repos\adventofcode\adventofcode\bin\Debug\net6.0\day19.deps.json
+C:\Users\bcave\source\repos\adventofcode\adventofcode\bin\Debug\net6.0\day19.runtimeconfig.json
+C:\Users\bcave\source\repos\adventofcode\adventofcode\bin\Debug\net6.0\day19.dll
+C:\Users\bcave\source\repos\adventofcode\adventofcode\bin\Debug\net6.0\day19.pdb
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\day19.csproj.AssemblyReference.cache
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\day19.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\day19.AssemblyInfoInputs.cache
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\day19.AssemblyInfo.cs
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\day19.csproj.CoreCompileInputs.cache
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\day19.dll
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\refint\day19.dll
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\day19.pdb
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\day19.genruntimeconfig.cache
+C:\Users\bcave\source\repos\adventofcode\adventofcode\obj\Debug\net6.0\ref\day19.dll
