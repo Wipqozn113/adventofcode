@@ -11,13 +11,24 @@ class Monkey:
             self.mon2 = None
             self.mon2name = job[2].strip()
             self.op = job[1].strip()
+            if name == "root":
+                self.op = "=="
 
     def FinishJob(self, monkeys):
         if self.val is None:
             self.mon1 = monkeys[self.mon1name]
             self.mon2 = monkeys[self.mon2name]
 
+    def RootJob(self):
+        return self.mon1.DoJob() == self.mon2.DoJob()
+
     def DoJob(self):
+        if self.name == "root":
+            return self.RootJob()
+
+        if self.name == "humn":
+            return self.val
+
         if self.val is not None:
             return self.val
 
@@ -43,6 +54,16 @@ def CreateMonkeys(filename):
 
     return monkeys
 
+def FindHumnNumber(monkeys):
+    humn = monkeys["humn"]
+    root = monkeys["root"]
+    num = 0
+    while True:
+        humn.val = num
+        if root.RootJob():
+            print(num)
+            return num
+        num += 1
+
 monkeys = CreateMonkeys("input.in")
-root = monkeys["root"]
-print(root.DoJob())
+FindHumnNumber(monkeys)
