@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\bcave\\source\\repos\\adventofcode\\adventofcode\\day19.csproj",
+      "projectUniqueName": "C:\\Development\\scripts\\adventofcode\\2022\\csharp\\adventofcode\\day19.csproj",
       "projectName": "day19",
-      "projectPath": "C:\\Users\\bcave\\source\\repos\\adventofcode\\adventofcode\\day19.csproj",
+      "projectPath": "C:\\Development\\scripts\\adventofcode\\2022\\csharp\\adventofcode\\day19.csproj",
       "packagesPath": "C:\\Users\\bcave\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\bcave\\source\\repos\\adventofcode\\adventofcode\\obj\\",
+      "outputPath": "C:\\Development\\scripts\\adventofcode\\2022\\csharp\\adventofcode\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\bcave\\AppData\\Roaming\\NuGet\\NuGet.Config",

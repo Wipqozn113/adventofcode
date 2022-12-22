@@ -11,7 +11,7 @@ namespace day16
         public  Graph(Node root, long maxDepth = 30)
         {
             Root = root;
-            MaxDepth = maxDepth;
+            MaxDepth = maxDepth - 1; // We start at minute 0 instead of minute 1
         }
 
         public long MaxDepth;
@@ -24,7 +24,19 @@ namespace day16
             }
         }
 
+        // Part 1
         public long FindBestPressure()
+        {
+            Root.State = new State()
+            {
+                Depth = 0,
+                MaxDepth = MaxDepth
+            };
+            return Root.Crawl();
+        }
+
+        // Part 2
+        public long FindBestPressureWithHelper()
         {
             Root.State = new State()
             {
@@ -137,6 +149,16 @@ namespace day16
 
         public Dictionary<string, long> Distance { get; set; } = new Dictionary<string, long>();
 
+        public List<Node> NodesToCrawl(CrawlerState state)
+        {
+            return new List<Node>();
+        }
+
+        public Node MultiCrawl(CrawlerState state)
+        {
+            return new Node();
+        }
+
         public long Crawl(long distance=0)
         {
             long bestPressure = State.PressureReleased;
@@ -181,6 +203,7 @@ namespace day16
 
             return bestPressure;
         }
+      
 
         public List<Node> CreatePaths()
         {
@@ -210,6 +233,7 @@ namespace day16
             State.UpdatePressureReleased(1);
         }
     }
+    
 
     public class State
     {       

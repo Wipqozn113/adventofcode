@@ -57,10 +57,10 @@ namespace day16
             }
         }
 
-        public static Graph CreateGraph(List<Node> nodes, string rootName = "AA")
+        public static Graph CreateGraph(List<Node> nodes, long maxDepth=30)
         {
-            var root = nodes.Where(x => x.Name == rootName).Single();
-            var graph = new Graph(root);
+            var root = nodes.Where(x => x.Name == "AA").Single();
+            var graph = new Graph(root, maxDepth);
             graph.Nodes = nodes.ToList();
             graph.NonZeroFlowRateNodes = nodes.Where(x => x.Valve.FlowRate > 0).ToList();
             graph.FindShortestPaths();
