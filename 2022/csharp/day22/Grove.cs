@@ -25,6 +25,7 @@ namespace day22
 
         }
 
+        public Cube Cube { get; set; }
         public long Width { get; set; }
         public long Height { get; set; }
         public long PosRow { get; set; }
@@ -86,6 +87,11 @@ namespace day22
             return Password;
         }
 
+        public long ExecuteCubeCommands()
+        {
+            return Cube.ExecuteCommands();
+        }
+
         public List<Command> Path { get; set; }
 
         public char[,] Map { get; set; }
@@ -94,8 +100,8 @@ namespace day22
     public class Command
     {
         public Grove Grove { get; set; }
-        string Facing { get; set; }
-        long Steps { get; set; }
+        public string Facing { get; set; }
+        public long Steps { get; set; }
         public bool IsRotation { get; set; }
 
         public Command(char facing)
@@ -123,7 +129,7 @@ namespace day22
             }
         }
 
-        private void UpdatePosition()
+        public virtual void UpdatePosition()
         {
             var row = Grove.PosRow;
             var col = Grove.PosCol;
@@ -201,7 +207,7 @@ namespace day22
             return;
         }
 
-        private void UpdateFacing()
+        public virtual void UpdateFacing()
         {
             if(Facing == "R")
             {
@@ -209,7 +215,14 @@ namespace day22
             }
             else
             {
-                Grove.FacingValue = (Grove.FacingValue - 1) % 4;
+                if (Grove.FacingValue == 0)
+                {
+                    Grove.FacingValue = 3;
+                }
+                else
+                {
+                    Grove.FacingValue = Grove.FacingValue - 1;
+                }
             }
         }
     }
