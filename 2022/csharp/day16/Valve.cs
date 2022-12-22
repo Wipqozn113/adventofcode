@@ -15,7 +15,7 @@ namespace day16
             Children = children;
         }
 
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
         public long FlowRate { get; set; }
         public List<string> Children { get; set; }
     }

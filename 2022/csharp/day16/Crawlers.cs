@@ -8,15 +8,107 @@ namespace day16
 {
     public class Crawlers
     {
-        public Crawler(Graph graph, long depth = 0)
+        public Crawlers(Graph graph, long depth = 0)
         {
             Graph = graph;
 
-            Human = new Crawler(depth, this, 1));
+            Human = new Crawler(depth, this, 1);
             Elephant = new Crawler(depth, this, 2);
 
         }
 
+        public long StartCrawl()
+        {
+            var state = new CrawlerState() { MaxDepth = Graph.MaxDepth, Graph = Graph };
+
+            state.CurrentElephantNode = Graph.Root;
+            state.CurrentHumanNode = Graph.Root;
+            
+            // NEed to setup initial path....
+
+            return Crawl(state);
+        }
+
+        public long Crawl(CrawlerState crawlerState)
+        {
+            crawlerState.Depth += 1;
+            crawlerState.UpdatePressureReleased();
+            var maxPressure = crawlerState.PressureReleased;
+
+            // Retreat if ready
+            if (crawlerState.AtMaxDepth)
+            {
+                return crawlerState.PressureReleased;
+            }
+
+            // Open Valves if ready
+            if (crawlerState.HumanReady)
+            {
+                crawlerState.NextHumanNode.OpenValve(crawlerState);
+            }
+
+            if (crawlerState.ElephantReady)
+            {
+                crawlerState.NextElephantNode.OpenValve(crawlerState);
+            }
+
+            // Human ready
+            if (crawlerState.HumanReady)
+            {
+                var humanNodes = crawlerState.CurrentHumanNode.NodesToCrawl(crawlerState);
+                foreach (var humanNode in humanNodes)
+                {
+                    // Both ready                    
+                    if (crawlerState.ElephantReady)
+                    {
+                        var elephantNodes = crawlerState.CurrentElephantNode.NodesToCrawl(crawlerState);
+                        foreach (var elephantNode in elephantNodes.Where(node => node.Name != humanNode.Name))
+                        {
+                            var state = crawlerState.Copy();
+
+                            state.NextHumanNode = humanNode;
+                            state.UpdateHumanDepth();
+                            state.NextElephantNode = elephantNode;
+                            state.UpdateElephantDepth();
+
+                            var pressure = Crawl(state);
+                            if (pressure > maxPressure)
+                                maxPressure = pressure;
+                        }
+                    }
+                    // Only Human ready
+                    else
+                    {
+                        var state = crawlerState.Copy();
+
+                        state.NextHumanNode = humanNode;
+                        state.UpdateHumanDepth();
+
+                        var pressure = Crawl(state);
+                        if (pressure > maxPressure)
+                            maxPressure = pressure;
+                    }
+                }
+            }
+            // Only Elephant is ready
+            else if (crawlerState.ElephantReady)
+            {
+                var elephantNodes = crawlerState.CurrentElephantNode.NodesToCrawl(crawlerState);
+                foreach (var elephantNode in elephantNodes)
+                {
+                    var state = crawlerState.Copy();
+
+                    state.NextElephantNode = elephantNode;
+                    state.UpdateElephantDepth();
+
+                    var pressure = Crawl(state);
+                    if (pressure > maxPressure)
+                        maxPressure = pressure;
+                }
+            }
+
+            return maxPressure;
+        }
 
             /// <summary>
             ///  Need to make this recursive somehow
@@ -75,7 +167,17 @@ namespace day16
 
     public class CrawlerState
     {
+        public Graph Graph { get; set; }
+
         public List<Node> ValvesOn { get; set; } = new List<Node>();
+
+        public bool AllValvesOpen
+        {
+            get
+            {
+                return ValvesOn.Count == Graph.NonZeroFlowRateNodes.Count;
+            }
+        }
 
         public CrawlerState Copy()
         {
@@ -85,8 +187,47 @@ namespace day16
                 PressureReleased = PressureReleased,
                 _pressurePerTurn = PressurePerTurn,
                 Depth = Depth,
-                MaxDepth = MaxDepth
+                MaxDepth = MaxDepth,
+                Graph = Graph
             };
+        }
+
+        public long JumpToDepth
+        {
+            get
+            {
+                return ElephantDepth > HumanDepth ? ElephantDepth : HumanDepth;
+            }
+        }
+
+        public Node? CurrentElephantNode { get; set; }
+        public Node? NextElephantNode { get; set; }
+        public long ElephantDepth { get; set; } = 0;
+        public bool ElephantReady
+        {
+            get
+            {
+                return ElephantDepth == Depth;
+            }
+        }
+        public void UpdateElephantDepth()
+        {
+            ElephantDepth += CurrentElephantNode?.Distance[NextElephantNode?.Name ?? ""] ?? 0;
+        }
+
+        public Node? CurrentHumanNode { get; set; }
+        public Node? NextHumanNode { get; set; }
+        public long HumanDepth { get; set; } = 0;
+        public bool HumanReady
+        {
+            get
+            {
+                return HumanDepth == Depth;
+            }
+        }
+        public void UpdateHumanDepth()
+        {
+            HumanDepth += CurrentHumanNode?.Distance[NextHumanNode?.Name ?? ""] ?? 0;
         }
 
         public long PressureReleased { get; set; } = 0;
@@ -110,11 +251,19 @@ namespace day16
             }
         }
 
-        private long _pressurePerTurn;
+        private long _pressurePerTurn = 0;
 
-        public long Depth { get; set; }
+        public long Depth { get; set; } = 0;
 
         public long MaxDepth { get; set; }
+
+        public bool AtMaxDepth
+        {
+            get
+            {
+                return Depth == MaxDepth;
+            }
+        }
 
         public long TimeRemaining
         {
@@ -127,10 +276,10 @@ namespace day16
 
     public class Crawler
     {
-        public Crawler(long depth, Crawlers crawlerStates, long id)
+        public Crawler(long depth, Crawlers crawlers, long id)
         {
             Depth = depth;
-            CrawlerStates = crawlerStates;
+            Crawlers = crawlers;
             Id = id;
         }
 
@@ -148,10 +297,5 @@ namespace day16
         public Node? NextNode { get; set; }
 
         public Crawlers Crawlers { get; set; }
-
-        public Node Crawl(CrawlerState state)
-        {
-
-        }
     }
 }

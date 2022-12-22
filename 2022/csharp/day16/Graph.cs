@@ -151,7 +151,23 @@ namespace day16
 
         public List<Node> NodesToCrawl(CrawlerState state)
         {
-            return new List<Node>();
+            var nodes = new List<Node>();
+
+            // Find all Nodes with unopened valves that we can reach within the time remaining
+            // Give higher priority to nodes which will produce the most pressure 
+            var unvisitedNodes = Graph.NonZeroFlowRateNodes
+                .Where(node => node.Name != state.NextElephantNode.Name && node.Name != state.NextHumanNode.Name)
+                .Where(node => !state.ValvesOn.Any(n => n.Name == node.Name))
+                .Where(node => Distance.ContainsKey(node.Name) && state.TimeRemaining - Distance[node.Name] > 0)
+                .OrderByDescending(node => node.Valve.FlowRate * (state.TimeRemaining - Distance[node.Name]))
+                .ToList();
+
+            // Already opened all valves, so just wait around
+            if (unvisitedNodes.Count == 0)
+                return nodes;
+
+            // Determine which valves are worth visiting, and in what order
+            return unvisitedNodes;
         }
 
         public Node MultiCrawl(CrawlerState state)
@@ -231,6 +247,12 @@ namespace day16
             State.UpdatePressureRate();
             State.Depth += 1;
             State.UpdatePressureReleased(1);
+        }
+
+        public void OpenValve(CrawlerState state)
+        {
+            state.ValvesOn.Add(this);
+            state.UpdatePressureRate();
         }
     }
     

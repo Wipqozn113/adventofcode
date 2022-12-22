@@ -25,7 +25,8 @@ namespace day16
             var nodes = Utils.CreateNodes(test);
             Utils.PopulateChildren(nodes);
             var graph = Utils.CreateGraph(nodes, 26);
-            Console.WriteLine(graph.FindBestPressureWithHelper());
+            var crawlers = new Crawlers(graph, 0);
+            Console.WriteLine(crawlers.StartCrawl());
         }
     }
 }
