@@ -14,15 +14,30 @@ namespace day22
 
         public CubeSide CurrentSide { get; set; }
         public long Row { set; get; } = 0;
+        public long FlatRow
+        {
+            get
+            {
+                return Row + CurrentSide.RowDisplacement + 1;
+            }
+        }
+
         public long Col { get; set; } = 0;
-        public long Facing { get; set; } = 0;
+        public long FlatCol
+        {
+            get
+            {
+                return Col + CurrentSide.ColDisplacement + 1;
+            }
+        }
+        public MovementFacing Facing { get; set; } = MovementFacing.Right;
 
         public long Password
         {
             // The final password is the sum of 1000 times the row, 4 times the column, and the facing.
             get
             {
-                return (1000 * Row) + (4 * Col) + Facing;
+                return (1000 * FlatRow)  + (4 * FlatCol) + (long)Facing;
             }
         }
 
@@ -47,6 +62,14 @@ namespace day22
         Bottom
     }
 
+    public enum MovementFacing
+    {
+        Right = 0,
+        Down = 1,
+        Left = 2,
+        Up = 3
+    }
+
     public class CubeSide
     {       
         public CubeFace Side { get; set;  }
@@ -67,6 +90,9 @@ namespace day22
         public CubeSide BottomSide { get; set; }
         public CubeSide RightSide { get; set; }
         public CubeSide LeftSide { get; set; }
+
+        public long RowDisplacement { get; set; }
+        public long ColDisplacement { get; set; }
     }
 
     public class CubeCommand : Command
@@ -99,30 +125,134 @@ namespace day22
         {
             if (Facing == "R")
             {
-                Cube.Facing = (Cube.Facing + 1) % 4;
+                int facing = (int)Cube.Facing;
+                facing = (facing + 1) % 4;
+                Cube.Facing = (MovementFacing)facing;
             }
             else
             {
-                if (Cube.Facing == 0)
+                if (Cube.Facing == MovementFacing.Right)
                 {
-                    Cube.Facing = 3;
+                    Cube.Facing = MovementFacing.Up;
                 }
                 else
                 {
-                    Cube.Facing = Cube.Facing - 1;
+                    int facing = (int)Cube.Facing;
+                    facing = facing - 1;
+                    Cube.Facing = (MovementFacing)facing;
                 }
             }
+        }
+
+        public (long, long) UpdatePosition(CubeSide fromCube, CubeSide toCube, long row, long col)
+        {
+            var newRow = row;
+            var newCol = col;
+
+            if (EnteredFromTopEdge(fromCube, toCube))
+            {
+                newRow = 0;
+                if(fromCube.Side == CubeFace.Top)
+                {
+                    if (toCube.Side == CubeFace.North || toCube.Side == CubeFace.South)
+                    {
+                        newCol = col;
+                    }
+                    else if (toCube.Side == CubeFace.East || toCube.Side == CubeFace.West)
+                    {
+                        newCol = row;
+                    }
+                }
+            }
+            else if (EnteredFromBottomEdge(fromCube, toCube))
+            {
+                newRow = toCube.Height - 1;
+                if (fromCube.Side == CubeFace.Bottom)
+                {
+                    if (toCube.Side == CubeFace.North || toCube.Side == CubeFace.South)
+                    {
+                        newCol = col;
+                    }
+                    else if (toCube.Side == CubeFace.East || toCube.Side == CubeFace.West)
+                    {
+                        newCol = row;
+                    }
+                }
+            }
+            else if (EnteredFromLeftEdge(fromCube, toCube))
+            {
+                newCol = 0;
+                if (toCube.Side == CubeFace.Top || toCube.Side == CubeFace.Bottom)
+                {
+                    newRow = col;
+                }
+            }
+            else if (EnteredFromRightEdge(fromCube, toCube))
+            {
+                newCol = toCube.Width - 1;
+                if (toCube.Side == CubeFace.Top || toCube.Side == CubeFace.Bottom)
+                {
+                    newRow = col;
+                }
+            }
+
+            return (newRow, newCol);
+        }
+
+        public MovementFacing UpdateFacing(CubeSide fromCube, CubeSide toCube)
+        {
+            var facing = Cube.Facing;
+            if(EnteredFromTopEdge(fromCube, toCube))
+            {
+                facing = MovementFacing.Down;
+            }
+            else if(EnteredFromBottomEdge(fromCube, toCube))
+            {
+                facing = MovementFacing.Up;
+            }
+            else if(EnteredFromLeftEdge(fromCube, toCube))
+            {
+                facing = MovementFacing.Right;
+            }
+            else if (EnteredFromRightEdge(fromCube, toCube))
+            {
+                facing = MovementFacing.Left;
+            }
+
+            return facing;
+        }
+
+        private bool EnteredFromTopEdge(CubeSide fromCube, CubeSide toCube)
+        {
+            return fromCube == toCube.TopSide;
+
+        }
+
+        private bool EnteredFromBottomEdge(CubeSide fromCube, CubeSide toCube)
+        {
+            return fromCube == toCube.BottomSide;
+        }
+
+        private bool EnteredFromLeftEdge(CubeSide fromCube, CubeSide toCube)
+        {
+            return fromCube == toCube.LeftSide;
+        }
+
+        private bool EnteredFromRightEdge(CubeSide fromCube, CubeSide toCube)
+        {
+            return fromCube == toCube.RightSide;
         }
 
 
         public override void UpdatePosition()
         {
-            long row = 0;
-            long col = 0;
+            long row = Cube.Row;
+            long col = Cube.Col;
             var nextRow = row;
             var nextCol = col;
             var stepsLeft = Steps;
             var currentSide = CurrentSide;
+            MovementFacing? facing = null;
 
             while(stepsLeft > 0)
             {
@@ -131,44 +261,42 @@ namespace day22
                     return;
 
                 // Try to move
-                if (Cube.Facing == 1 || Cube.Facing == 3)
+                if (Cube.Facing == MovementFacing.Up|| Cube.Facing == MovementFacing.Down)
                 {
-                    nextRow = Cube.Facing == 1 ? row + 1 : row - 1;
+                    nextRow = Cube.Facing == MovementFacing.Down ? row + 1 : row - 1;
 
                     // Reached the edge, go to next side (if possible)
                     if (nextRow == currentSide.Height)
                     {
-                        CurrentSide = currentSide.BottomSide;
-                        currentSide = CurrentSide;
-                        nextRow = 0;
+                       facing = UpdateFacing(currentSide, currentSide.BottomSide);
+                        (nextRow, nextCol) = UpdatePosition(currentSide, currentSide.BottomSide, nextRow, nextCol);
+                        currentSide = currentSide.BottomSide;
                     }
                     else if(nextRow == -1)
                     {
-                        Cube.Facing = 3;
-                        CurrentSide = currentSide.TopSide;
-                        currentSide = CurrentSide;
-                        nextRow = currentSide.Height - 1;
+                        facing = UpdateFacing(currentSide, currentSide.TopSide);
+                        (nextRow, nextCol) = UpdatePosition(currentSide, currentSide.TopSide, nextRow, nextCol);
+                        currentSide = currentSide.TopSide;
                     }
                 }
                 else
                 {
-                    if (Cube.Facing == 0 || Cube.Facing == 2)
+                    if (Cube.Facing == MovementFacing.Right || Cube.Facing == MovementFacing.Left)
                     {
-                        nextCol = Cube.Facing == 0 ? nextCol + 1 : nextCol - 1;
+                        nextCol = Cube.Facing == MovementFacing.Right ? nextCol + 1 : nextCol - 1;
 
                         // Reached the edge, go to next side (if possible)
                         if (nextCol == currentSide.Width)
                         {
-                            CurrentSide = currentSide.RightSide;
-                            currentSide = CurrentSide;
-                            nextRow = 0;
+                            facing = UpdateFacing(currentSide, currentSide.RightSide);
+                            (nextRow, nextCol) = UpdatePosition(currentSide, currentSide.RightSide, nextRow, nextCol);
+                            currentSide = currentSide.RightSide;
                         }   
                         else if(nextCol == -1)
                         {
-                            Cube.Facing = 2;
-                            CurrentSide = currentSide.LeftSide;
-                            currentSide = CurrentSide;
-                            nextRow = currentSide.Width - 1;
+                            facing = UpdateFacing(currentSide, currentSide.LeftSide);
+                            (nextRow, nextCol) = UpdatePosition(currentSide, currentSide.LeftSide, nextRow, nextCol);
+                            currentSide = currentSide.LeftSide;
                         }
                     }
                 }
@@ -183,9 +311,13 @@ namespace day22
                 // I can move, keep going
                 else if (currentSide.Map[nextRow, nextCol] == '.')
                 {
+  
+                    Cube.Facing = facing ?? Cube.Facing;
+                    facing = null;       
                     row = nextRow;
                     col = nextCol;
                     stepsLeft -= 1;
+                    CurrentSide = currentSide;
                 }
             }            
 

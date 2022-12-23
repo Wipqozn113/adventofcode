@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace day22
 {
-    public static class CubeUtils
+    public static partial class CubeUtils
     {
         public static Cube GetCube(bool test=false)
         {
@@ -27,10 +27,9 @@ namespace day22
             {
                 if (line.Count() == 0)
                     continue;
-                var l = line;
+                var l = line.Trim();
                 foreach (char c in l)
                 {
-
                     map[row, col] = c;
 
                     col++;
@@ -128,7 +127,9 @@ namespace day22
                 Side = CubeFace.Top,
                 Map = map,
                 Height = height,
-                Width = width
+                Width = width,
+                RowDisplacement = height * 0,
+                ColDisplacement = width * 2
             };
 
             return side;
@@ -147,7 +148,9 @@ namespace day22
                 Side = CubeFace.North,
                 Map = map,
                 Height = height,
-                Width = width
+                Width = width,
+                RowDisplacement = height * 1,
+                ColDisplacement = width * 0
             };
 
             return side;
@@ -166,7 +169,9 @@ namespace day22
                 Side = CubeFace.West,
                 Map = map,
                 Height = height,
-                Width = width
+                Width = width,
+                RowDisplacement = height * 1,
+                ColDisplacement = width * 1
             };
 
             return side;
@@ -185,7 +190,9 @@ namespace day22
                 Side = CubeFace.South,
                 Map = map,
                 Height = height,
-                Width = width
+                Width = width,
+                RowDisplacement = height * 1,
+                ColDisplacement = width * 2
             };
 
             return side;
@@ -204,7 +211,9 @@ namespace day22
                 Side = CubeFace.Bottom,
                 Map = map,
                 Height = height,
-                Width = width
+                Width = width,
+                RowDisplacement = height * 2,
+                ColDisplacement = width * 2
             };
 
             return side;
@@ -223,16 +232,12 @@ namespace day22
                 Side = CubeFace.East,
                 Map = map,
                 Height = height,
-                Width = width
+                Width = width,
+                RowDisplacement = height * 2,
+                ColDisplacement = width * 3
             };
 
             return side;
-        }
-
-
-        public static Cube CreateCube()
-        {
-            return new Cube();
-        }
+        }   
     }
 }

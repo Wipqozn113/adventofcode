@@ -11,10 +11,19 @@ namespace day16
         public  Graph(Node root, long maxDepth = 30)
         {
             Root = root;
+            HumanRoot = root.HumanCopy();
+            ElephantRoot = root.ElepehantCopy();
+            
             MaxDepth = maxDepth - 1; // We start at minute 0 instead of minute 1
         }
 
         public long MaxDepth;
+
+        public long HumanPressure { get; set; }
+        public long ElephantPressure { get; set; }
+        public long BestTotalPressure { get; set; }
+
+
 
         public void ResetNodes()
         {
@@ -32,7 +41,27 @@ namespace day16
                 Depth = 0,
                 MaxDepth = MaxDepth
             };
+          
             return Root.Crawl();
+        }
+
+        // Part 2
+        public long FindBestPressureWithElephant()
+        {
+            HumanRoot.Graph = this;
+            HumanRoot.State.Depth = 0;
+            HumanRoot.State.MaxDepth = MaxDepth;
+            ElephantRoot.Graph = this;
+            ElephantRoot.State.Depth = 0;
+            ElephantRoot.State.MaxDepth = MaxDepth;
+            return HumanRoot.Crawl();
+        }
+
+        public long ElephantCrawl(State state)
+        {
+            ElephantRoot.State = state.ElephantCopy();
+
+            return ElephantRoot.Crawl();
         }
 
         // Part 2
@@ -43,7 +72,7 @@ namespace day16
                 Depth = 0,
                 MaxDepth = MaxDepth
             };
-            return Root.Crawl();
+            return HumanRoot.Crawl();
         }
 
         public void FindShortestPaths()
@@ -112,6 +141,10 @@ namespace day16
 
         public Node Root { get; set; }
 
+        public Node HumanRoot { get; set; }
+
+        public Node ElephantRoot { get; set; }
+
         public List<Node> Nodes { get; set; } = new List<Node>();
 
         public List<Node> NonZeroFlowRateNodes { get; set; } = new List<Node>();
@@ -120,6 +153,32 @@ namespace day16
 
     public class Node
     {
+        public Node HumanCopy()
+        {
+            return new Node()
+            {
+                Graph = Graph,
+                Children = Children,
+                Valve = Valve,
+                State = State.Copy(),
+                Distance = Distance
+
+            };
+        }
+
+        public Node ElepehantCopy()
+        {
+            return new Node()
+            {
+                Graph = Graph,
+                Children = Children,
+                Valve = Valve,
+                State = State.ElephantCopy(),
+                Distance = Distance
+
+            };
+        }
+
         public string Name
         {
             get
@@ -177,13 +236,23 @@ namespace day16
 
         public long Crawl(long distance=0)
         {
-            long bestPressure = State.PressureReleased;
+            long bestPressure = State.TotalPressureReleased;
+            if (State.TotalPressureReleased > Graph.BestTotalPressure)
+                Graph.BestTotalPressure = State.TotalPressureReleased;
 
             // Update pressure based on time taken to get here
             State.UpdatePressureReleased(distance);
 
             if(State.TimeRemaining == 0)
             {
+                if(!State.IsElepahnt)
+                {
+                    Graph.ElephantCrawl(State);
+                }
+
+                if (State.TotalPressureReleased > Graph.BestTotalPressure)
+                    Graph.BestTotalPressure = State.TotalPressureReleased;
+
                 return State.PressureReleased;
             }
 
@@ -199,8 +268,16 @@ namespace day16
             if(nodes.Count == 0 || State.TimeRemaining == 0)
             {
                 State.UpdatePressureReleased(State.TimeRemaining);
-                if (State.PressureReleased > bestPressure)
-                    bestPressure = State.PressureReleased;
+                if (State.TotalPressureReleased > bestPressure)
+                    bestPressure = State.TotalPressureReleased;
+
+                if (!State.IsElepahnt)
+                {
+                    Graph.ElephantCrawl(State);
+                }
+
+                if (State.TotalPressureReleased > Graph.BestTotalPressure)
+                    Graph.BestTotalPressure = State.TotalPressureReleased;
 
                 return bestPressure;
             }
@@ -216,6 +293,14 @@ namespace day16
                 if(pressure > bestPressure)
                     bestPressure = pressure;
             }
+
+            if (!State.IsElepahnt && State.TimeRemaining == 0)
+            {
+                Graph.ElephantCrawl(State);
+            }
+
+            if (State.TotalPressureReleased > Graph.BestTotalPressure)
+                Graph.BestTotalPressure = State.TotalPressureReleased;
 
             return bestPressure;
         }
@@ -259,6 +344,10 @@ namespace day16
 
     public class State
     {       
+        public State? HumanState { get; set; }
+
+        public bool IsElepahnt { get; set; } = false;
+
         public List<Node> ValvesOn { get; set; } = new List<Node>();
 
         public Valve? NextValve { get; set; }
@@ -271,11 +360,52 @@ namespace day16
                 PressureReleased = PressureReleased,
                 _pressurePerTurn = PressurePerTurn,
                 Depth = Depth,
-                MaxDepth = MaxDepth                
+                MaxDepth = MaxDepth,       
+                HumanState = HumanState,
+                IsElepahnt = IsElepahnt
             };
         }
 
-        public long PressureReleased { get; set; } = 0;
+        public State ElephantCopy()
+        {
+            return new State()
+            {
+                HumanState = this,
+                ValvesOn = ValvesOn.ToList(),
+                PressureReleased = 0,
+                _pressurePerTurn = 0,
+                Depth = 0,
+                MaxDepth = MaxDepth,
+                IsElepahnt = true
+            };
+        }
+
+
+        public long PressureReleased
+        {
+            get
+            {
+                return IsElepahnt ? _elephantPressure : _humanPressure;
+            }
+            set
+            {
+                if (IsElepahnt)
+                    _elephantPressure = value;
+                else
+                    _humanPressure = value;
+            }
+        }
+
+        public long TotalPressureReleased
+        {
+            get
+            {
+                return _humanPressure + _elephantPressure;
+            }
+        }
+
+        private long _humanPressure = 0;
+        private long _elephantPressure = 0;
 
         public void UpdatePressureReleased(long time = 1)
         {

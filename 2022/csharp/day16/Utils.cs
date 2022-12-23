@@ -8,7 +8,7 @@ namespace day16
 {
     public static class Utils
     {
-        public static List<Node> CreateNodes(bool test=false)
+        public static List<Node> CreateNodes(bool crawlAgain = false, bool test=false)
         {
             // Valve JC has flow rate=0; tunnels lead to valves XS, XK
             List<Node> nodes = new List<Node>();
@@ -43,6 +43,7 @@ namespace day16
                 {
                     Valve = valve,
                 };
+
                 nodes.Add(node);
             }
 
