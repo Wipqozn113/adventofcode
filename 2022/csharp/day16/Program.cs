@@ -8,11 +8,12 @@ namespace day16
     {
         static void Main(string[] args)
         {
-            //Part1();
-            Part2Basic();
+            Part1(true);
+            //Part2(true);
            // Part2(true);
         }
 
+        // 1754 
         static void Part1(bool test=false)
         {
             var nodes = Utils.CreateNodes(test);
@@ -24,7 +25,7 @@ namespace day16
 
         static void Part2Basic(bool test = false)
         {
-            var nodes = Utils.CreateNodes(true, test);
+            var nodes = Utils.CreateNodes( test);
             Utils.PopulateChildren(nodes);
             var graph = Utils.CreateGraph(nodes, 26);
             Console.Write("Part 2: ");
@@ -32,11 +33,12 @@ namespace day16
             Console.WriteLine(graph.BestTotalPressure);
         }
 
+        // 2474
         static void Part2(bool test = false)
         {
-            var nodes = Utils.CreateNodes(true, test);
+            var nodes = Utils.CreateNodes(test);
             Utils.PopulateChildren(nodes);
-            var graph = Utils.CreateGraph(nodes, 26);
+            var graph = Utils.CreateGraph(nodes, 30);
             var crawlers = new Crawlers(graph, 0);
             Console.WriteLine(crawlers.StartCrawl());
         }

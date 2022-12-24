@@ -19,7 +19,14 @@ namespace day16
 
         public long StartCrawl()
         {
-            var state = new CrawlerState() { MaxDepth = Graph.MaxDepth, Graph = Graph };
+            var state = new CrawlerState() 
+            { 
+                MaxDepth = Graph.MaxDepth, 
+                Graph = Graph, 
+                Depth = 0,
+                ElephantDepth = 0,
+                HumanDepth = 0
+            };
 
             state.CurrentElephantNode = Graph.Root;
             state.CurrentHumanNode = Graph.Root;
@@ -31,41 +38,51 @@ namespace day16
 
         public long Crawl(CrawlerState crawlerState)
         {
-            crawlerState.Depth += 1;
             crawlerState.UpdatePressureReleased();
             var maxPressure = crawlerState.PressureReleased;
 
-            // Retreat if ready
+            // At max depth
             if (crawlerState.AtMaxDepth)
             {
                 return crawlerState.PressureReleased;
             }
 
-            // Open Valves if ready
-            if (crawlerState.HumanReady)
+            if (crawlerState.AllValvesOpen)
             {
-                crawlerState.NextHumanNode.OpenValve(crawlerState);
+                crawlerState.Depth += 1;
+                return Crawl(crawlerState);
             }
 
-            if (crawlerState.ElephantReady)
+            // Open Valves if ready
+            /*if (crawlerState.HumanReady && crawlerState.NextHumanNode is not null)
             {
-                crawlerState.NextElephantNode.OpenValve(crawlerState);
+                crawlerState.NextHumanNode?.OpenValve(crawlerState);
+                crawlerState.CurrentHumanNode = crawlerState.NextHumanNode;
+                crawlerState.HumanOpeningValve = true;
+            }*/
+
+            if (crawlerState.ElephantReadyToOpenValve && crawlerState.NextElephantNode is not null)
+            {
+                crawlerState.ElephantOpeningValve = true;
+                crawlerState.NextElephantNode?.OpenValve(crawlerState);
+                crawlerState.CurrentElephantNode = crawlerState.NextElephantNode;
             }
 
             // Human ready
-            if (crawlerState.HumanReady)
+            if (crawlerState.HumanReadyForNextNode)
             {
                 var humanNodes = crawlerState.CurrentHumanNode.NodesToCrawl(crawlerState);
                 foreach (var humanNode in humanNodes)
                 {
                     // Both ready                    
-                    if (crawlerState.ElephantReady)
+                    if (crawlerState.ElephantReadyForNextNode)
                     {
                         var elephantNodes = crawlerState.CurrentElephantNode.NodesToCrawl(crawlerState);
+                        crawlerState.ElephantOpeningValve = false;
                         foreach (var elephantNode in elephantNodes.Where(node => node.Name != humanNode.Name))
                         {
                             var state = crawlerState.Copy();
-
+                            state.Depth += 1;
                             state.NextHumanNode = humanNode;
                             state.UpdateHumanDepth();
                             state.NextElephantNode = elephantNode;
@@ -81,6 +98,7 @@ namespace day16
                     {
                         var state = crawlerState.Copy();
 
+                        state.Depth += 1;
                         state.NextHumanNode = humanNode;
                         state.UpdateHumanDepth();
 
@@ -91,21 +109,33 @@ namespace day16
                 }
             }
             // Only Elephant is ready
-            else if (crawlerState.ElephantReady)
+            else if (crawlerState.ElephantReadyForNextNode)
             {
                 var elephantNodes = crawlerState.CurrentElephantNode.NodesToCrawl(crawlerState);
                 foreach (var elephantNode in elephantNodes)
                 {
                     var state = crawlerState.Copy();
-
                     state.NextElephantNode = elephantNode;
                     state.UpdateElephantDepth();
+                    state.Depth += 1;
 
                     var pressure = Crawl(state);
                     if (pressure > maxPressure)
                         maxPressure = pressure;
                 }
             }
+
+            // At max depth
+            if (crawlerState.AtMaxDepth)
+            {
+                return crawlerState.PressureReleased;
+            }
+
+            var cstate = crawlerState.Copy();
+            cstate.Depth += 1;
+            var pres = Crawl(cstate);
+            if (pres > maxPressure)
+                maxPressure = pres;
 
             return maxPressure;
         }
@@ -187,8 +217,14 @@ namespace day16
                 PressureReleased = PressureReleased,
                 _pressurePerTurn = PressurePerTurn,
                 Depth = Depth,
+                ElephantDepth = ElephantDepth,
+                HumanDepth = HumanDepth,
                 MaxDepth = MaxDepth,
-                Graph = Graph
+                Graph = Graph,
+                CurrentHumanNode = CurrentHumanNode,
+                NextHumanNode = NextHumanNode,
+                CurrentElephantNode = CurrentElephantNode,
+                NextElephantNode= NextElephantNode
             };
         }
 
@@ -203,26 +239,51 @@ namespace day16
         public Node? CurrentElephantNode { get; set; }
         public Node? NextElephantNode { get; set; }
         public long ElephantDepth { get; set; } = 0;
-        public bool ElephantReady
+        public bool ElephantReadyToOpenValve
         {
             get
             {
                 return ElephantDepth == Depth;
             }
         }
+  
+        public bool ElephantReadyForNextNode
+        {
+            get
+            {
+                var ready =  (ElephantDepth <= Depth) && !ElephantOpeningValve;
+
+                // IF ready, reset valve opening state
+                if(ready)
+                {
+                    ElephantOpeningValve = false;
+                }
+
+                return ready;
+            }
+        }
+        public bool ElephantOpeningValve { get; set; }
+        public bool HumanOpeningValve { get; set; }
         public void UpdateElephantDepth()
         {
-            ElephantDepth += CurrentElephantNode?.Distance[NextElephantNode?.Name ?? ""] ?? 0;
+            ElephantDepth = Depth + CurrentElephantNode?.Distance[NextElephantNode?.Name ?? ""] ?? 0;
         }
 
         public Node? CurrentHumanNode { get; set; }
         public Node? NextHumanNode { get; set; }
         public long HumanDepth { get; set; } = 0;
-        public bool HumanReady
+        public bool HumanReadyToOpenValve
         {
             get
             {
-                return HumanDepth == Depth;
+                return false; // HumanDepth == Depth;
+            }
+        }
+        public bool HumanReadyForNextNode
+        {
+            get
+            {
+                return false; // (HumanDepth == Depth) && !HumanOpeningValve;
             }
         }
         public void UpdateHumanDepth()
@@ -261,7 +322,12 @@ namespace day16
         {
             get
             {
-                return Depth == MaxDepth;
+                var maxd = Depth == MaxDepth;
+                if(Depth > MaxDepth)
+                {
+                    var what = "what";
+                }
+                return maxd;
             }
         }
 

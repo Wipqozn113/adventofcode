@@ -14,32 +14,37 @@ namespace day22
         {
             long height = 50;
             long width = 50;
-            var topCube = CreateSideTop(height, width);
-            var northCube = CreateSideNorth(height, width);
-            var westCube = CreateSideWest(height, width);
-            var southCube = CreateSideSouth(height, width);
-            var bottomCube = CreateSideBottom(height, width);
-            var eastCube = CreateSideEast(height, width);
+            var cube1 = CreateSide1(height, width);
+            var cube2 = CreateSide2(height, width);
+            var cube3 = CreateSide3(height, width);
+            var cube4 = CreateSide4(height, width);
+            var cube5 = CreateSide5(height, width);
+            var cube6 = CreateSide6(height, width);
 
             var cube = new Cube()
             {
-                StartingSide = topCube,
-                Sides = new List<CubeSide>() { topCube, northCube, westCube, southCube, bottomCube, eastCube },
-                CurrentSide = topCube
+                StartingSide = cube1,
+                Sides = new List<CubeSide>() { cube1, cube2, cube3, cube4, cube5, cube6 },
+                CurrentSide = cube1
             };
 
-            // construct sides
-            topCube.PopulateSides(northCube, southCube, eastCube, westCube);
-            bottomCube.PopulateSides(southCube, northCube, eastCube, westCube);
-            northCube.PopulateSides(topCube, bottomCube, westCube, eastCube);
-            southCube.PopulateSides(topCube, bottomCube, eastCube, westCube);
-            eastCube.PopulateSides(topCube, bottomCube, southCube, northCube);
-            westCube.PopulateSides(topCube, bottomCube, northCube, southCube);
+            // construct sides // top bottom right left
+            cube1.PopulateSides(cube6, cube3, cube2, cube4);
+            cube2.PopulateSides(cube6, cube3, cube5, cube1);
+            cube3.PopulateSides(cube1, cube5, cube2, cube4);
+            cube4.PopulateSides(cube3, cube6, cube5, cube1);
+            cube5.PopulateSides(cube3, cube6, cube2, cube4);
+            cube6.PopulateSides(cube4, cube2, cube5, cube1);
 
             return cube;
         }
 
-        public static CubeSide CreateSideTop(long height, long width)
+        // 1
+        //   T  
+        //   6  
+        // 4 1 2
+        //   3  
+        public static CubeSide CreateSide1(long height, long width)
         {
             var inp =
 @".............................#.#..................
@@ -106,7 +111,12 @@ namespace day22
             return side;
         }
 
-        public static CubeSide CreateSideNorth(long height, long width)
+        // 6
+        // N
+        //   4
+        // 1 6 5
+        //   2
+        public static CubeSide CreateSide6(long height, long width)
         {
             var inp =
 @"......#..........#.................#.......#......
@@ -173,7 +183,12 @@ namespace day22
             return side;
         }
 
-        public static CubeSide CreateSideWest(long height, long width)
+        // 4
+        // w  
+        //  3  
+        //1 4 5
+        //  6  
+        public static CubeSide CreateSide4(long height, long width)
         {
             var inp =
 @"....................#....#..#.....#.#..#..........
@@ -240,7 +255,12 @@ namespace day22
             return side;
         }
 
-        public static CubeSide CreateSideSouth(long height, long width)
+        // 3
+        //   S
+        //   1
+        // 4 3 2
+        //   5
+        public static CubeSide CreateSide3(long height, long width)
         {
             var inp =
 @"#.....#........................#.....#...#....#...
@@ -307,7 +327,12 @@ namespace day22
             return side;
         }
 
-        public static CubeSide CreateSideBottom(long height, long width)
+        // 5
+         //   B
+         //   3 
+         // 4 5 2
+         //   6
+        public static CubeSide CreateSide5(long height, long width)
         {
             var inp =
 @"...#..................#.............#.............
@@ -374,7 +399,12 @@ namespace day22
             return side;
         }
 
-        public static CubeSide CreateSideEast(long height, long width)
+        // 2
+        //   E
+        //   6
+        // 1 2 5
+        //   3
+        public static CubeSide CreateSide2(long height, long width)
         {
             var inp =
 @"..#....##....................#..#......#......#...

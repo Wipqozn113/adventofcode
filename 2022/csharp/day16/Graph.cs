@@ -215,7 +215,7 @@ namespace day16
             // Find all Nodes with unopened valves that we can reach within the time remaining
             // Give higher priority to nodes which will produce the most pressure 
             var unvisitedNodes = Graph.NonZeroFlowRateNodes
-                .Where(node => node.Name != state.NextElephantNode.Name && node.Name != state.NextHumanNode.Name)
+                .Where(node => node.Name != state.NextElephantNode?.Name && node.Name != state.NextHumanNode?.Name)
                 .Where(node => !state.ValvesOn.Any(n => n.Name == node.Name))
                 .Where(node => Distance.ContainsKey(node.Name) && state.TimeRemaining - Distance[node.Name] > 0)
                 .OrderByDescending(node => node.Valve.FlowRate * (state.TimeRemaining - Distance[node.Name]))

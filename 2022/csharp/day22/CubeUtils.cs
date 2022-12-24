@@ -17,11 +17,12 @@ namespace day22
 
         }
 
-        public static char[,] CreateMap(string mapStr, long width, long height)
+        public static char[,] CreateMap(string mapStr, long width, long height, 
+            long colStart = 0, long rowStart = 0, bool colUp = true, bool rowUp = true, bool flipped = true)
         {
             var map = new char[height, width];
-            var col = 0;
-            var row = 0;
+            var col = colStart;
+            var row = rowStart;
             var lines = mapStr.Split(Environment.NewLine);
             foreach (var line in lines)
             {
@@ -32,11 +33,11 @@ namespace day22
                 {
                     map[row, col] = c;
 
-                    col++;
+                    col = colUp ? col + 1 : col - 1;
                 }
 
-                col = 0;
-                row++;
+                col = colStart;
+                row = rowUp ? row + 1 : row - 1;
             }
 
             return map;

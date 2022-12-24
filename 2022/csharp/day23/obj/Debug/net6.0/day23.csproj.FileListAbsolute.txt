@@ -1,0 +1,15 @@
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\day23.csproj.AssemblyReference.cache
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\day23.GeneratedMSBuildEditorConfig.editorconfig
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\day23.AssemblyInfoInputs.cache
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\day23.AssemblyInfo.cs
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\day23.csproj.CoreCompileInputs.cache
+C:\Development\scripts\adventofcode\2022\csharp\day23\bin\Debug\net6.0\day23.exe
+C:\Development\scripts\adventofcode\2022\csharp\day23\bin\Debug\net6.0\day23.deps.json
+C:\Development\scripts\adventofcode\2022\csharp\day23\bin\Debug\net6.0\day23.runtimeconfig.json
+C:\Development\scripts\adventofcode\2022\csharp\day23\bin\Debug\net6.0\day23.dll
+C:\Development\scripts\adventofcode\2022\csharp\day23\bin\Debug\net6.0\day23.pdb
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\day23.dll
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\refint\day23.dll
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\day23.pdb
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\day23.genruntimeconfig.cache
+C:\Development\scripts\adventofcode\2022\csharp\day23\obj\Debug\net6.0\ref\day23.dll

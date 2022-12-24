@@ -1,0 +1,15 @@
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\day16_2.csproj.AssemblyReference.cache
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\day16_2.GeneratedMSBuildEditorConfig.editorconfig
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\day16_2.AssemblyInfoInputs.cache
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\day16_2.AssemblyInfo.cs
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\day16_2.csproj.CoreCompileInputs.cache
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\bin\Debug\net6.0\day16_2.exe
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\bin\Debug\net6.0\day16_2.deps.json
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\bin\Debug\net6.0\day16_2.runtimeconfig.json
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\bin\Debug\net6.0\day16_2.dll
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\bin\Debug\net6.0\day16_2.pdb
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\day16_2.dll
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\refint\day16_2.dll
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\day16_2.pdb
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\day16_2.genruntimeconfig.cache
+C:\Development\scripts\adventofcode\2022\csharp\day16_2\obj\Debug\net6.0\ref\day16_2.dll
