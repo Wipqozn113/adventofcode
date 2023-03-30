@@ -43,6 +43,7 @@ namespace day16
                 {
                     Valve = valve,
                 };
+
                 nodes.Add(node);
             }
 
