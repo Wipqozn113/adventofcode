@@ -9,6 +9,30 @@ class SNAFU:
     def SetDecimal(self, decimal):
         self.dec = decimal
 
+    def SnafuAddition(self, other):
+        sn1 = self.ConvertToIntList(self.snafu)
+        sn2 = self.ConvertToIntList(other.snafu)
+        result = []
+        i = len(sn1) if len(sn1) > len(sn2) else len(sn2)
+        for n in range(1, i+1):
+            sn3 = sn1[-n] + sn2[-n]
+            if -2 > sn3 > 2:
+                #
+
+
+    def ConvertToIntList(self, convert):
+        snafu = []
+        for sn in convert
+            if sn == "-":
+                sn = -1
+            elif sn == "-2":
+                sn = -2
+            else:
+                sn = int(sn)
+            snafu.append(sn)
+        return snafu
+
+
     @property
     def AsSnafu(self):
         if self.snafu is not None:
