@@ -10,22 +10,31 @@ class SNAFU:
         self.dec = decimal
 
     def SnafuAddition(self, other):
+        carry_the_one = False
         sn1 = self.ConvertToIntList(self.snafu)
         sn2 = self.ConvertToIntList(other.snafu)
         result = []
         i = len(sn1) if len(sn1) > len(sn2) else len(sn2)
         for n in range(1, i+1):
-            sn3 = sn1[-n] + sn2[-n]
-            if -2 > sn3 > 2:
-                #
+            val1 = 0 if n > len(sn1) else sn1[-n]
+            val2 = 0 if n > len(sn2) else sn2[-n]
+            sn3 = val1 + val2  
+            result.insert(0, sn3)
+                   
+        print(result)
 
+    def _CarryTheOne(self, val):
+        if abs(sn3) == 3:
+            sn3 = -2 if sn3 > 0 else 2
+        elif abs(sn3) == 4:
+            sn3 = -1 if sn3 > 0 else 1
 
     def ConvertToIntList(self, convert):
         snafu = []
-        for sn in convert
+        for sn in convert:
             if sn == "-":
                 sn = -1
-            elif sn == "-2":
+            elif sn == "=":
                 sn = -2
             else:
                 sn = int(sn)
@@ -99,6 +108,14 @@ def CalculateSum(filename = "test.in"):
 
     return snafu
 
+def Tests():
+    snafu1 = SNAFU()
+    snafu1.SetSnafu("1=")
+    snafu2 = SNAFU()
+    snafu2.SetSnafu("1-")
+    snafu1.SnafuAddition(snafu2)
+
+Tests()
 total = CalculateSum()
 print("Decimal: ", total.AsDecimal)
 print("SNAFU: ", total.AsSnafu)
