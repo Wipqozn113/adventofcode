@@ -41,6 +41,7 @@ class Game:
 
 def sum_possible_games(games, red, green, blue):
     total = 0
+
     for game in games:
         total += game.id if game.is_possible(red, green, blue) else 0
 
@@ -48,6 +49,7 @@ def sum_possible_games(games, red, green, blue):
 
 def sum_powers(games):
     total = 0
+
     for game in games:
         total += game.power()
 
@@ -64,9 +66,4 @@ with open(filename) as file:
         games.append(Game(line))
 
 print(sum_possible_games(games, red, green, blue))
-print(sum_powers(games))
-
-
-
-
-    
+print(sum_powers(games))    
