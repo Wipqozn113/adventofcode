@@ -22,10 +22,8 @@ total = 0
 with open(filename) as file:
     for line in file:
         numbers = line.split(":")[1].split("|")
-        winners = numbers[0].strip().split(" ")        
-        winners[:] = [i for i in winners if i != '']
-        nums = numbers[1].strip().split(" ")
-        nums[:] = [i for i in nums if i != '']
+        winners = numbers[0].strip().split()        
+        nums = numbers[1].strip().split()
         card = Card(winners, nums)
         total += card.Score()
         cards.append(card)
