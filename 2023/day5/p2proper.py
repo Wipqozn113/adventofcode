@@ -1,6 +1,17 @@
+class Numbers:
+    def __init__(self, start, end, type):
+        self.start = start
+        self.end = end
+        self.type = type
+
+    def convert(self, mappers):
+        return mappers.map(self.start, self.end, type)
+
 class Seed:
-    def __init__(self, seed_num):
-        self.seed_num = seed_num
+    def __init__(self, start_num, range_num):
+        self.start_num = start_num
+        self.end_num = start_num + range_num
+        self.seed_num = start_num
         self.soil_num = None
         self.fert_num = None
         self.water_num = None
@@ -31,8 +42,8 @@ class Mappers:
     def add_mapper(self, mapper):
         self.mappers[mapper.src_name] = mapper
 
-    def map(self, src_num, src_type):
-        return self.mappers[src_type].map(src_num)        
+    def map(self, src_start, src_end, src_type):
+        return self.mappers[src_type].map(src_start, src_end)        
 
 class Mapper:
     def __init__(self, source, destination):
@@ -44,9 +55,9 @@ class Mapper:
         ln = line.split()
         self.ranges.append([int(ln[1]), int(ln[0]), int(ln[2])])
 
-    def map(self, src):
+    def map(self, src_start, src_end):
         for ran in self.ranges:
-            if ran[0] <= src <= ran[0] + ran[2]:                
+            if (ran[0] <= src_start <= ran[0] + ran[2]) or (ran[0] <= src_end <= ran[0] + ran[2]):             
                 return ran[1] + (src - ran[0])
         return src
 
