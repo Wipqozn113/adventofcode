@@ -53,8 +53,11 @@ class Mapper:
 def parse_seeds(line):
     seeds = line.split(":")[1].strip().split()
     sds = []
-    for seed in seeds:
-        sds.append(Seed(int(seed)))
+    while len(seeds) > 0:
+        ran = int(seeds.pop())
+        start = int(seeds.pop())
+        for seed in range(start, start + ran):
+            sds.append(Seed(seed))
     return sds
 
 
