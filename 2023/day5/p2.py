@@ -63,7 +63,7 @@ def parse_seeds(line):
 
 seeds = []
 mappers = Mappers()
-filename = "input.in"
+filename = "test.in"
 
 with open(filename) as file:
     mapper = None
