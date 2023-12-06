@@ -10,7 +10,9 @@ namespace AOC2023.Day5
     {
         public static void Part2()
         {
-            Console.WriteLine("Hello, World!");
+            var seed = new Seed(10, 10);
+            var seeds = seed.Split(12, 15);
+            Console.WriteLine("Test");
         }
     }
 }

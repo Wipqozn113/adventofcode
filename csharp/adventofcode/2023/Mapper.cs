@@ -12,27 +12,18 @@ namespace AOC2023.Day5
         public Mapping(int sourceStart, int destStart, int range) 
         { 
             SourceStart = sourceStart;
+            SourceEnd = sourceStart + Range; 
             DestStart = destStart;
+            DestEnd = DestStart + Range;
             Range = range;
         }
 
-        public int SourceStart { get; private set; }
-        public int SourceEnd
-        {
-            get
-            {
-                return SourceStart + Range;
-            }
-        }
-        public int DestStart { get; private set; }
-        public int DestEnd
-        {
-            get
-            {
-                return DestStart + Range;
-            }
-        }
-        public int Range { get; private set; }
+        public int SourceStart { get; set; }
+        public int SourceEnd { get; set; }
+        
+        public int DestStart { get; set; }
+        public int DestEnd { get; set; }
+        public int Range { get; set; }
     } 
 
     public class Mapper
@@ -41,8 +32,19 @@ namespace AOC2023.Day5
 
         public List<Soil> Map(Seed seed)
         {
-            var soils = new List<Soil>();           
-
+            var soils = new List<Soil>();
+            var seeds = new Queue<Seed>();
+            seeds.Enqueue(seed);
+            while(seeds.Count > 0) 
+            {
+                var sd = seeds.Dequeue();
+                foreach(var map in SeedToSoilMappings)
+                {
+                    var newseeds = sd.Split(map.SourceStart, map.SourceEnd);
+                    newseeds.ForEach(s => seeds.Enqueue(s));
+                    soils.Add(sd.Convert<Soil>(map.SourceStart, map.SourceEnd));
+                }
+            }
 
 
             return soils;
