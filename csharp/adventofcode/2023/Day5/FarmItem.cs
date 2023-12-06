@@ -10,22 +10,22 @@ namespace AOC2023.Day5
     {
         public FarmItem() { }
 
-        public FarmItem(int startNum, int range) 
+        public FarmItem(long startNum, long range) 
         {
             StartNum = startNum;
             EndNum = startNum + range;
         }
 
-        public int StartNum { get; set; }
-        public int EndNum { get; set; }
+        public long StartNum { get; set; }
+        public long EndNum { get; set; }
 
-        public bool CanConvert<T>(int startNum, int endNum) where T : FarmItem, new()
+        public bool CanConvert<T>(long startNum, long endNum) where T : FarmItem, new()
         {
             return (StartNum >= startNum && (StartNum <= endNum || EndNum <= endNum)) ||
                (StartNum < startNum && EndNum >= startNum);
         }
 
-        public List<T> Split<T>(int startNum, int endNum) where T : FarmItem, new()
+        public List<T> Split<T>(long startNum, long endNum) where T : FarmItem, new()
         {
             var newitems = new List<T>();
 
@@ -53,7 +53,7 @@ namespace AOC2023.Day5
             };
         }
 
-        public T Convert<T>(int sourceStart, int destStart) where T : FarmItem, new() 
+        public T Convert<T>(long sourceStart, long destStart) where T : FarmItem, new() 
         {
             var diff = sourceStart - destStart;
             var t = new T()
@@ -71,33 +71,55 @@ namespace AOC2023.Day5
     {
         public Seed() : base() { }
 
-        public Seed(int startNum, int range) : base(startNum, range) { }
-
-        public bool CanConvert(int startNum, int endNum)
-        {
-            return CanConvert<Soil>(startNum, endNum);
-        }
-
-        public List<Seed> Split(int startNum, int endNum)
-        {
-            return Split<Seed>(startNum, endNum);
-        }
-
-        public Soil Convert()
-        {
-            return Convert<Soil>();
-        }
-
-        public Soil Convert(int sourceStart, int destStart)
-        {
-            return Convert<Soil>(sourceStart, destStart);
-        }
+        public Seed(long startNum, long range) : base(startNum, range) { }
     }
 
     public class Soil : FarmItem
     {
         public Soil() : base() { }
 
-        public Soil(int startNum, int range) : base(startNum, range) { }
+        public Soil(long startNum, long range) : base(startNum, range) { }
+    }
+
+    public class Fertilizer : FarmItem
+    {
+        public Fertilizer() : base() { }
+
+        public Fertilizer(long startNum, long range) : base(startNum, range) { }
+    }
+
+    public class Water : FarmItem
+    {
+        public Water() : base() { }
+
+        public Water(long startNum, long range) : base(startNum, range) { }
+    }
+
+    public class Light : FarmItem
+    {
+        public Light() : base() { }
+
+        public Light(long startNum, long range) : base(startNum, range) { }
+    }
+
+    public class Temperature : FarmItem
+    {
+        public Temperature() : base() { }
+
+        public Temperature(long startNum, long range) : base(startNum, range) { }
+    }
+
+    public class Humdity : FarmItem
+    {
+        public Humdity() : base() { }
+
+        public Humdity(long startNum, long range) : base(startNum, range) { }
+    }
+
+    public class Location : FarmItem
+    {
+        public Location() : base() { }
+
+        public Location(long startNum, long range) : base(startNum, range) { }
     }
 }

@@ -9,7 +9,7 @@ namespace AOC2023.Day5
 {
     public class Mapping
     {
-        public Mapping(int sourceStart, int destStart, int range) 
+        public Mapping(long sourceStart, long destStart, long range) 
         { 
             SourceStart = sourceStart;
             SourceEnd = sourceStart + range; 
@@ -18,35 +18,89 @@ namespace AOC2023.Day5
             Range = range;
         }
 
-        public int SourceStart { get; set; }
-        public int SourceEnd { get; set; }  
+        public long SourceStart { get; set; }
+        public long SourceEnd { get; set; }  
         
-        public int DestStart { get; set; }
-        public int DestEnd { get; set; }
-        public int Range { get; set; }
+        public long DestStart { get; set; }
+        public long DestEnd { get; set; }
+        public long Range { get; set; }
     } 
 
     public class Mapper
     {
         public List<Mapping> SeedToSoilMappings { get; private set; } = new List<Mapping>(); 
         public List<Mapping> SoilToFertilizerMappings { get; private set; } = new List<Mapping>();
+        public List<Mapping> FertilizerToWaterMappings { get; private set; } = new List<Mapping>();
+        public List<Mapping> WaterLightToMappings { get; private set; } = new List<Mapping>();
+        public List<Mapping> LightToTemperatureMappings { get; private set; } = new List<Mapping>();
+        public List<Mapping> TemperatureToHumdityMappings { get; private set; } = new List<Mapping>();
+        public List<Mapping> HumdityToLocationMappings { get; private set; } = new List<Mapping>();
 
         public void CreateMapping(string line)
         {
             return;
         }
 
-        public void CreateMapping(int sourceStart, int destStart, int range, string type) 
+        public void CreateMapping(long sourceStart, long destStart, long range, string type) 
         {
-            if(type == "seedtosoil")
+            switch (type)
             {
-                SeedToSoilMappings.Add(new Mapping(sourceStart, destStart, range));
+                case "seed-to-soil":
+                    SeedToSoilMappings.Add(new Mapping(sourceStart, destStart, range));
+                    break;
+                case "soil-to-fertilizer":
+                    SoilToFertilizerMappings.Add(new Mapping(sourceStart, destStart, range));
+                    break;
+                case "fertilizer-to-water":
+                    FertilizerToWaterMappings.Add(new Mapping(sourceStart, destStart, range));
+                    break;
+                case "water-to-light":
+                    WaterLightToMappings.Add(new Mapping(sourceStart, destStart, range));
+                    break;
+                case "light-to-temperature":
+                    LightToTemperatureMappings.Add(new Mapping(sourceStart, destStart, range));
+                    break;
+                case "temperature-to-humidity":
+                    TemperatureToHumdityMappings.Add(new Mapping(sourceStart, destStart, range));
+                    break;
+                case "humidity-to-location":
+                    HumdityToLocationMappings.Add(new Mapping(sourceStart, destStart, range));
+                    break;
             }
         }
 
         public List<Soil> Map(Seed seed)
         {
             return Map<Soil, Seed>(seed, SeedToSoilMappings);
+        }
+
+        public List<Fertilizer> Map(Soil soil)
+        {
+            return Map<Fertilizer, Soil>(soil, SoilToFertilizerMappings);
+        }
+
+        public List<Water> Map(Fertilizer fertilizer)
+        {
+            return Map<Water, Fertilizer>(fertilizer, FertilizerToWaterMappings);
+        }
+
+        public List<Light> Map(Water water)
+        {
+            return Map<Light, Water>(water, WaterLightToMappings);
+        }
+        public List<Temperature> Map(Light light)
+        {
+            return Map<Temperature, Light>(light, LightToTemperatureMappings);
+        }
+
+        public List<Humdity> Map(Temperature temperature)
+        {
+            return Map<Humdity, Temperature>(temperature, TemperatureToHumdityMappings);
+        }
+
+        public List<Location> Map(Humdity humdity)
+        {
+            return Map<Location, Humdity>(humdity, HumdityToLocationMappings);
         }
 
         public List<TD> Map<TD, TS>(TS source, List<Mapping> mappings) where TS : FarmItem, new () where TD : FarmItem, new()
