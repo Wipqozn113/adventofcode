@@ -36,7 +36,7 @@ namespace AOC2023.Day6
         private static List<Hand> PopulateFromFile(bool jokers = false)
         {
             var hands = new List<Hand>();
-            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day6\\test.txt";
+            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day6\\input.txt";
             var lines = File.ReadLines(path);
 
             foreach(var line in lines)

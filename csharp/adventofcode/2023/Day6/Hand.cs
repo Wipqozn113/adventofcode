@@ -94,7 +94,7 @@ namespace AOC2023.Day6
                     if(strength > highestStrength)
                         highestStrength = strength;
 
-                    foreach (var card in cards.Where(x => x.IsJoker))
+                    foreach (var card in cards)
                     {
                         card.ResetValue();
                     }

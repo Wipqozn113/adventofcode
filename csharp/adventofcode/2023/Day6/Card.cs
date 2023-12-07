@@ -29,7 +29,7 @@ namespace AOC2023.Day6
         {
             get
             {
-                return Jokers && Value == 1;
+                return Jokers && Symbol == "J";
             }
         }
 
