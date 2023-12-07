@@ -78,7 +78,7 @@ namespace AOC2023.Day5
         private static void PopulateFromFile(string filename, Mapper mapper, List<Seed> seeds)
         {
             // Too lazy to get it to work properly
-            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day5\\input.txt";
+            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day5\\test.txt";
             var lines = File.ReadLines(path);
             var mapType = "";
             foreach (var line in lines)
