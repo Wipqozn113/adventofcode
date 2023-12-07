@@ -81,7 +81,7 @@ namespace AOC2023.Day6
                 var highestStrength = 1;
                 for(int i = 2; i <= 14; i++)
                 {
-                    if (i == 1)
+                    if (i == 11)
                         continue;
 
                     var cards = Cards.ToList();
@@ -99,7 +99,7 @@ namespace AOC2023.Day6
                         card.ResetValue();
                     }
                 }
-
+                Strength = highestStrength;
             }
             else
             {
