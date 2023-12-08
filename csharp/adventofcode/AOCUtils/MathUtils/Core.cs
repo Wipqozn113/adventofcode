@@ -25,6 +25,7 @@ namespace AOCUtils.MathUtils
             return numbers.Aggregate(LCM);
         }
 
+        // https://stackoverflow.com/a/20824923/608314
         public static long GCF(long a, long b)
         {
             while (b != 0)
@@ -36,6 +37,7 @@ namespace AOCUtils.MathUtils
             return a;
         }
 
+        // https://stackoverflow.com/a/20824923/608314
         public static long LCM(long a, long b)
         {
             return (a / GCF(a, b)) * b;

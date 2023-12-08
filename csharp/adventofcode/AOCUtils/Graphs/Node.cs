@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AOCUtils.Graphs
 {
-    public class Node
+    public class Node<T> where T : IComparable
     {
         public Node(string name, List<string> childNames) 
         {
@@ -18,14 +18,14 @@ namespace AOCUtils.Graphs
 
         public List<string> ChildNames { get; set; }
 
-        public List<Node> Children { get; set; } = new List<Node>();
+        public List<Node<T>> Children { get; set; } = new List<Node<T>>();
 
-        public void AddChildren(List<Node> children)
+        public void AddChildren(List<Node<T>> children)
         {
             Children.AddRange(children);
         }
 
-        public void AddChild(Node child)
+        public void AddChild(Node<T> child)
         {
             Children.Add(child);
         }
