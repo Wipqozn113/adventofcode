@@ -14,4 +14,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AOCUtils\AOCUtils.csproj" />
+  </ItemGroup>
+
 </Project>
