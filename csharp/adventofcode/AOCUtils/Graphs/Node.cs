@@ -8,13 +8,16 @@ namespace AOCUtils.Graphs
 {
     public class Node<T> where T : IComparable
     {
-        public Node(string name, List<string> childNames) 
+        public Node(string name, List<string> childNames, T item) 
         {
             Name = name;
             ChildNames = childNames;
+            Item = item;
         }
 
         public string Name { get; set; }
+
+        public T Item { get; set; }
 
         public List<string> ChildNames { get; set; }
 
