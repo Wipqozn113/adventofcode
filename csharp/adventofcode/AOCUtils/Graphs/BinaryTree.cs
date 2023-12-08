@@ -19,8 +19,8 @@ namespace AOCUtils.Graphs
 
         public void Insert(string name, long value)
         {
-            if(ContainsNode(name))
-                throw new ArgumentException($"Tree already contains node with name {name}. Names must be unique.")
+            if (ContainsNode(name))
+                throw new ArgumentException($"Tree already contains node with name {name}. Names must be unique.");
 
             var node = new Node(name, value);
             Head.AddChild(node);
