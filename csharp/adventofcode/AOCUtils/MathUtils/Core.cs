@@ -8,18 +8,37 @@ namespace AOCUtils.MathUtils
 {
     public static class Core
     {
-        // https://stackoverflow.com/a/29717490/608314
-        public static int LCM(IEnumerable<int> numbers)
+        public static long LCM(IEnumerable<int> numbers)
         {
-            return numbers.Aggregate(lcm);
+            var convertedList = new List<long>();
+            
+            foreach(var number in numbers)
+            {
+                convertedList.Add(Convert.ToInt64(number));
+            }
+
+            return LCM(convertedList);
         }
-        public static int lcm(int a, int b)
+
+        public static long LCM(IEnumerable<long> numbers) 
         {
-            return Math.Abs(a * b) / GCD(a, b);
+            return numbers.Aggregate(LCM);
         }
-        public static int GCD(int a, int b)
+
+        public static long GCF(long a, long b)
         {
-            return b == 0 ? a : GCD(b, a % b);
+            while (b != 0)
+            {
+                long temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        public static long LCM(long a, long b)
+        {
+            return (a / GCF(a, b)) * b;
         }
     }
 }

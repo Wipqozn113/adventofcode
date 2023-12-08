@@ -69,15 +69,10 @@ namespace AOC2023.Day8
                 {
                     firstEnds.Add(steps);
                     currentNodes.Remove(node);
-                    //Console.WriteLine(steps.ToString());
                 }
 
             }
 
-            foreach(var step in firstEnds)
-            {
-                Console.WriteLine(step.ToString());
-            }
             return Core.LCM(firstEnds);
         }
 
