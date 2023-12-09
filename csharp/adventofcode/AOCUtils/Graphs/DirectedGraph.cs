@@ -8,6 +8,13 @@ namespace AOCUtils.Graphs
 {
     public class DirectedGraph
     {
+        public DirectedGraph(string rootName)
+        {
+            Root = new Node(rootName);
+        }
+
+        private Node Root { get; set; }
+
         private class Node
         {
             public Node(string name)
