@@ -35,7 +35,7 @@ namespace AOC2022.Day16
 
         private Valve Root { get; set; }
 
-        private List<Valve> Valves { get; set; }
+        private List<Valve> Valves { get; set; } = new List<Valve>();
 
         public void AddValve(Valve valve)
         {

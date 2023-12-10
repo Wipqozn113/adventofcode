@@ -12,6 +12,7 @@ class Tile:
         self.West  = symbol in ['-', 'J', '7', '.']
         self.part_of_loop = False
         self.inside_loop = False
+        self.outside_loop = False
 
     def Exit(self):
         x = self.x
@@ -252,9 +253,15 @@ class Grid:
             else:
                 self.pipes[i][x].inside_loop = True
 
-
-
     def can_trace_path(self, tile):
+        steps = 0
+        max_length = len(self.loop) * 2
+
+        while steps < max_length:
+              
+
+
+    def choose_wall_to_follow(self, x, y):
         pass
 
     def findNestedTiles(self):
