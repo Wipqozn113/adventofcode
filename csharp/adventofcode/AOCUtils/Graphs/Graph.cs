@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace AOCUtils.Graphs
 {
-    public class DirectedGraph
+    public class Graph
     {
-        public DirectedGraph(string rootName)
+        public Graph(string rootName)
         {
             Root = new Node(rootName);
         }
