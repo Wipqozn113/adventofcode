@@ -8,6 +8,16 @@ namespace AOCUtils.MathUtils
 {
     public static class Core
     {
+        public static long ManhattenDistance(long x1, long y1, long x2, long y2)
+        {
+            return Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
+        }
+
+        public static int ManhattenDistance(int x1, int y1, int x2, int y2)
+        {
+            return Math.Abs(x1 - x2) + Math.Abs(y1 - y2);
+        }
+
         public static long LCM(IEnumerable<int> numbers)
         {
             var convertedList = new List<long>();
