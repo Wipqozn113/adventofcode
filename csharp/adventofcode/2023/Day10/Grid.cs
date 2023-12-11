@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Runtime.InteropServices.Marshalling;
 using System.Text;
@@ -45,23 +46,112 @@ namespace AOC2023.Day10
                 explorer.Reset(Start);
                 var tile = Start;
                 var steps = 0;
+                var loop = new List<Tile>();
 
-                while(steps < count)
+                try
                 {
-                    explorer.Move(tile);
-                    steps++;
-                    tile = Tiles[explorer.Y][explorer.X];
-                    if (tile == Start)
+                    while (steps < count)
                     {
-                        var val = (double)steps / 2;
-                        var furthest = Math.Ceiling(val);
-                        return (int)furthest;
+                        loop.Add(tile);
+                        if (explorer.Move(tile))
+                        {
+                            steps++;
+
+                            tile = Tiles[explorer.Y][explorer.X];
+                            if (tile == Start)
+                            {
+                                if (!explorer.Move(tile))
+                                {
+                                    break;
+                                }
+                                loop.ForEach(t => t.PartOfLoop = true);
+                                var val = (double)steps / 2;
+                                var furthest = Math.Ceiling(val);
+                                return (int)furthest;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    continue;
                 }
             }
 
             return 0;
         }
+
+        private void ClearJunk()
+        {
+            var junk = Tiles.SelectMany(l => l).Distinct().Where(t => t.PartOfLoop == false).ToList();
+            junk.ForEach(x => x.Symbol = '.');
+        }
+
+        public void PrintMe()
+        {            
+            foreach(var tiles in Tiles)
+            {
+                var line = "";
+                foreach(var tile in tiles)
+                {
+                    if (tile.PartOfLoop)
+                        line += tile.Symbol;
+                    else if (tile.NestedInsideLoop)
+                        line += 'I';
+                    else if (!tile.NestedInsideLoop)
+                        line += 'O';
+                }
+                Console.WriteLine(line);
+            }
+        }
+
+        public int CountNestedTiles()
+        {
+            ClearJunk();
+
+            /*
+                1: | (flip)
+                2: F-7 (no change)
+                3: F-J (flip)
+                4: L-7 (flip)
+                5: L-J (no change)
+            */
+            foreach(var tiles in Tiles)
+            {
+                var insideLoop = false;
+                var last = ' ';
+                foreach(var tile in tiles)
+                {
+                    if(tile.Symbol == '|')
+                    {
+                        insideLoop = !insideLoop;
+                    }
+                    else if (tile.Symbol == 'F' || tile.Symbol == 'L')
+                    {
+                        last = tile.Symbol;
+                    }
+                    else if (tile.Symbol == 'J' && last == 'F')
+                    {
+                        insideLoop = !insideLoop;
+                    }
+                    else if (tile.Symbol == '7' && last == 'L')
+                    {
+                        insideLoop = !insideLoop;
+                    }
+                    else if(tile.Symbol == '.')
+                    {
+                        tile.NestedInsideLoop = insideLoop;
+                    }
+                }
+            }
+
+            return Tiles.SelectMany(l => l).Distinct().Where(t => !t.PartOfLoop && t.NestedInsideLoop).Count();
+        }
+
 
     }
 }

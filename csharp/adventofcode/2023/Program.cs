@@ -25,7 +25,7 @@ while (day is not null && day.ToLower() != "exit")
     else if (day == "10")
     {
         D10.Part1();
-        //D10.Part2();
+        D10.Part2();
     }
 
     Console.WriteLine("Which day would you like to run?  Enter EXIT to end program.\n");

@@ -55,5 +55,9 @@ namespace AOC2023.Day10
         public List<Direction> Directions { get; set; } = new List<Direction>();
 
         public bool IsStart { get; set; }
+
+        public bool PartOfLoop { get; set; } = false;
+
+        public bool NestedInsideLoop { get; set; } = false;
     }
 }

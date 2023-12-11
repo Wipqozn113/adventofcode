@@ -26,11 +26,19 @@ namespace AOC2023.Day10
             Facing = DirectionHelpers.FlipDirection(start.Directions[0]);
         }
 
-        public void Move(Tile tile)
+        public bool Move(Tile tile)
         {
             // Update Facing and move explorer
             var enteredFrom = DirectionHelpers.FlipDirection(Facing);
+
+            // Moved into this tile illegally
+            if(!tile.Directions.Contains(enteredFrom))
+            {
+                return false;
+            }
+
             Facing = tile.Directions.FirstOrDefault(x => x != enteredFrom);
+
 
             // Move one tile
             if (Facing == Direction.North)
@@ -41,6 +49,8 @@ namespace AOC2023.Day10
                 Y += 1;
             else if (Facing == Direction.West)
                 X -= 1;
+
+            return true;
         }
     }
 }
