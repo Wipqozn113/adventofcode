@@ -119,8 +119,9 @@ namespace AOC2023.Day10
                 3: F-J (flip)
                 4: L-7 (flip)
                 5: L-J (no change)
+                https://www.reddit.com/r/adventofcode/comments/18ey1s7/2023_day_10_part_2_stumped_on_how_to_approach_this/kcr1jga/
             */
-            foreach(var tiles in Tiles)
+            foreach (var tiles in Tiles)
             {
                 var insideLoop = false;
                 var last = ' ';
