@@ -10,7 +10,7 @@ namespace AOC2023.Day12
 {
     public class SpringRow
     {
-        public SpringRow(string line)
+        public SpringRow(string line )
         {
             ParseLine(line);
         }
@@ -99,6 +99,42 @@ namespace AOC2023.Day12
                         }
                     }                  
                 }
+            }
+
+            return combinations;
+        }
+
+        private long FindValidCombinations(Queue<int> groups, string row, int group)
+        {
+            // Leave the original lists unalterered 
+            var newGroups = new Queue<int>(groups);
+            long combinations = 0;
+
+            // A "." is not part of a group
+            if (row[0] == '.')
+            {
+                return FindValidCombinations(newGroups, row.Substring(1), group);
+            }
+
+            // There's not enough space left to fit this group along with
+            // the remaining groups, so we can back out now.
+            var maxLength = row.Length - newGroups.Sum();
+            if(group >= maxLength)
+            {
+                return 0;
+            }
+
+            // Must be start of the group
+            if (row[0] == '#')
+            {
+                var newGroup = newGroups.Dequeue();
+                return FindValidCombinations(newGroups, row.Substring(group + 1), newGroup);
+            }
+
+            // May be start of the group
+            if (row[0] == '?')
+            {
+
             }
 
             return combinations;
