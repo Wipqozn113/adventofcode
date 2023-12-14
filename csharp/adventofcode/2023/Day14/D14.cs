@@ -18,14 +18,13 @@ namespace AOC2023.Day14
 
         public static void Part2()
         {
-            var dish = CreateReflectorDish();
-            dish.SpinCycle();
-            Console.WriteLine("Part 2: " + dish.TotalLoad());
+            var dish = CreateReflectorDish();            
+            Console.WriteLine("Part 2: " + dish.SpinCycle());
         }
 
         public static ReflectorDish CreateReflectorDish()
         {
-            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day14\\test.txt";
+            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day14\\input.txt";
             var lines = File.ReadLines(path).ToList();
             var dish = new ReflectorDish(lines);
             return dish;

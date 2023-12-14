@@ -15,6 +15,38 @@ namespace AOC2023.Day14
 
         public List<List<Tile>> Tiles { get; set; } = new List<List<Tile>>();
 
+        private List<string> CycleOrder { get; set; } = new List<string>();
+
+        private Dictionary<string, long> Map = new Dictionary<string, long>();
+
+        private long StoreList(int count)
+        {
+            var line = "";
+            foreach(var tiles in Tiles)
+            {
+                foreach(var tile in tiles)
+                {
+                    line += tile.Occupant;
+                }
+            }
+            
+            if(CycleOrder.Contains(line))
+            {
+                var start = CycleOrder.IndexOf(line);
+                var cycleLength = CycleOrder.Count - start;
+                var cycle = (count - start) % cycleLength;
+                var pattern = CycleOrder[cycle + start - 1];
+                return Map[pattern];
+            }
+            else
+            {
+                CycleOrder.Add(line);
+                Map[line] = TotalLoad();
+            }
+
+            return -1;
+        }
+
         private void PopulateTiles(List<string> lines)
         {
             var y = 0;
@@ -58,19 +90,23 @@ namespace AOC2023.Day14
             return total;
         }  
 
-        public void SpinCycle(long count = 1000000000)
+        public long SpinCycle(int count = 1000000000)
         {
             for (long i = 0; i < count; i++)
             {
-                if(i % 1000000 == 0)
-                {
-                    Console.WriteLine("On cycle " + i.ToString());
-                }
                 TiltNorth();               
                 TiltWest();
                 TiltSouth();
                 TiltEast();
+                
+                var val = StoreList(count);    
+                if(val >= 0)
+                {
+                    return val;
+                }
             }
+
+            return 0;
         }
 
         public void TiltNorth()
