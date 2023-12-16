@@ -18,6 +18,11 @@ namespace AOC2023.Day12
             {
                 var springs = new SpringRow(line);
                 springs.CalculateValidCombinations();
+                var newCalc = springs.ValidCombinations;
+                springs.CalculateValidCombinationsOld();
+                var oldCalc = springs.ValidCombinations;
+                if (newCalc != oldCalc)
+                    Console.WriteLine("Correct: " + oldCalc.ToString() + " Wrong: " + newCalc.ToString() + " " + line);
                 total += springs.ValidCombinations;
             }
             Console.WriteLine("Part 1: " + total.ToString());
@@ -25,7 +30,7 @@ namespace AOC2023.Day12
 
         public static void Part2()
         {
-            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day12\\test.txt";
+            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day12\\input.txt";
             var lines = File.ReadLines(path);
             long total = 0;
             foreach (var line in lines)

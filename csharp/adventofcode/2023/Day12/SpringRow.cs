@@ -54,6 +54,14 @@ namespace AOC2023.Day12
             ValidCombinations = FindValidCombinations(groups, row,  new StringBuilder(row));
         }
 
+        public void CalculateValidCombinationsOld()
+        {
+            var groups = new Queue<int>(Groups);
+            var row = Row.ToString();
+            ValidCombinations = FindValidCombinations(0, groups, row);
+            //ValidCombinations = FindValidCombinations(groups, row, new StringBuilder(row));
+        }
+
         private Dictionary<string, long> Map = new Dictionary<string, long>();
 
         private string CreateCacheKey(Queue<int> groups, string row)
@@ -140,14 +148,10 @@ namespace AOC2023.Day12
 
         private long FindValidCombinations(Queue<int> groups, string row, StringBuilder fullrow)
         {
+            // Correct: 2 Wrong: 4 ??#?.?#????.? 1,4
             var result = GetCacheResult(groups, row);
             if(result >= 0)
                 return result;
-
-            if(row == "?###????????")
-            {
-                var test = "ohno";
-            }
 
             // An empty group without '#' means we found a valid pattern
             // An empty group with '#' means we didn't found a valid pattern
@@ -158,7 +162,7 @@ namespace AOC2023.Day12
             }
             else if (groups.Count == 0)
             {
-                Console.WriteLine(fullrow);
+               // Console.WriteLine(fullrow);
                 return 1;
             }
 
@@ -194,7 +198,8 @@ namespace AOC2023.Day12
                 }
                 else
                 {
-                    combinations += FindValidCombinations(new Queue<int>(groups), row.Substring(1), fullrow);
+                    // Invalid path
+                    return 0;
                 }
             }
 
@@ -233,7 +238,7 @@ namespace AOC2023.Day12
                 }
             }
 
-            //CacheResult(groups, row, combinations);
+            CacheResult(groups, row, combinations);
             return combinations;
         }
     }
