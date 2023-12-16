@@ -11,7 +11,7 @@ namespace AOC2023.Day12
     {
         public static void Part1()
         {
-            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day12\\test.txt";
+            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day12\\input.txt";
             var lines = File.ReadLines(path);
             long total = 0;
             foreach (var line in lines)
@@ -30,7 +30,7 @@ namespace AOC2023.Day12
             long total = 0;
             foreach (var line in lines)
             {
-                Console.WriteLine("On line " + line);
+               //Console.WriteLine("On line " + line);
                 var springs = new SpringRow(line);
                 springs.Rollout();
                 springs.CalculateValidCombinations();

@@ -40,7 +40,7 @@ while (day is not null && day.ToLower() != "exit")
     else if (day == "12")
     {
         D12.Part1();
-        //   D12.Part2();
+        //D12.Part2();
     }
     else if (day == "14")
     {
