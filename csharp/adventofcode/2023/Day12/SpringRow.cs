@@ -50,11 +50,48 @@ namespace AOC2023.Day12
             var groups = new Queue<int>(Groups);
             var row = Row.ToString();
             var group = groups.Dequeue();
+            //ValidCombinations = FindValidCombinations(0, groups, row);
             ValidCombinations = FindValidCombinations(groups, row, group);
         }
 
-       /* private long FindValidCombinations(int startIndex, Queue<int> groups, string row)
+        private Dictionary<string, long> Map = new Dictionary<string, long>();
+
+        private string CreateCacheKey(int startIndex, Queue<int> groups, string row)
         {
+            var key = "";
+            var groupCopy = new Queue<int>(groups);
+            while (groupCopy.Any())
+            {
+                var val = groupCopy.Dequeue();
+                key += val.ToString() + ",";
+            }
+            key += "+" + row.Substring(startIndex);
+
+            return key;
+        }
+
+        private void CacheResult(int startIndex, Queue<int> groups, string row, long result)
+        {
+            var key = CreateCacheKey(startIndex, groups, row);
+            Map[key] = result;
+        }
+
+        private long GetCacheResult(int startIndex, Queue<int> groups, string row)
+        {
+            var key = CreateCacheKey(startIndex, groups, row);
+
+            if (Map.ContainsKey(key))
+                return Map[key];
+            else
+                return -1;
+        }
+
+        private long FindValidCombinations(int startIndex, Queue<int> groups, string row)
+        {
+            var cacheResult = GetCacheResult(startIndex, groups, row);
+            if(cacheResult >= 0)
+                return cacheResult; 
+
             // Leave the original lists unalterered 
             var newGroups = new Queue<int>(groups);
             var group = newGroups.Dequeue();
@@ -102,11 +139,16 @@ namespace AOC2023.Day12
                 }
             }
 
+            CacheResult(startIndex, groups, row, combinations);
             return combinations;
-        }*/
+        }
 
         private long FindValidCombinations(Queue<int> groups, string row, int group)
         {
+            if(row == "?###????????")
+            {
+                var test = "ohno";
+            }
             // An empty group without '#' means we found a valid pattern
             // An empty group with '#' means we didn't found a valid pattern
            /* if (groups.Count == 0 && row.Contains('#'))
@@ -132,13 +174,24 @@ namespace AOC2023.Day12
             }
 
             // Must be start of the group
+            // WRONG WRONG WRONG: If we assumed a ? was an ., then we could be in the middle of a #
             if (row[0] == '#')
             {
-                if (newGroups.Count == 0)
-                    return 1;
+                // ADD A CHECK TO ENSURE WE HAVE ENOGUH SPACE FOR A GROUP
+                var testString = row.Substring(0, group);
 
-                var newGroup = newGroups.Dequeue();
-                return FindValidCombinations(newGroups, row.Substring(group + 1), newGroup);
+                if (!testString.Contains('.') && (group == row.Length || row[group] != '#'))
+                {
+                    if (newGroups.Count == 0)
+                        return 1;
+
+                    var newGroup = newGroups.Dequeue();
+                    return FindValidCombinations(newGroups, row.Substring(group + 1), newGroup);
+                }
+                else
+                {
+                    return FindValidCombinations(new Queue<int>(groups), row.Substring(1), group);
+                }
             }
 
             // May be start of the group
@@ -148,14 +201,10 @@ namespace AOC2023.Day12
                 // we can't fit enough '#' there to satisfy the group
                 // aka this '?' is forced into a state of '.'
                 var testString = row.Substring(0, group);
-                if(testString.Contains('.'))
-                {
-                    return FindValidCombinations(groups, row.Substring(1), group);
-                }
 
                 // If there are enough ?/# to fit the group, then we also need to ensure
-                // there's a '.' present to act as a seperator 
-                if (row[group] == '.' || row[group] == '?')
+                // there's a '.' present to act as a seperator (or we're at end of the string)
+                if (!testString.Contains('.') && (group == row.Length || row[group] != '#'))
                 {
                     if (newGroups.Count == 0)
                         return 1;
@@ -165,8 +214,15 @@ namespace AOC2023.Day12
                     combinations += FindValidCombinations(newGroups, row.Substring(group + 1), newGroup);
 
                     // Next, we assume there's a '.'
-                    combinations += FindValidCombinations(groups, row.Substring(1), group);
+                    combinations += FindValidCombinations(new Queue<int>(groups), row.Substring(1), group);
                 }
+                // Nothing to act as a seperator, so this must be a '.'
+                else
+                {
+                    return FindValidCombinations(new Queue<int>(groups), row.Substring(1), group);
+                }
+
+
             }
 
             return combinations;
