@@ -148,7 +148,7 @@ namespace AOC2023.Day12
 
         private long FindValidCombinations(Queue<int> groups, string row, StringBuilder fullrow)
         {
-            // Correct: 2 Wrong: 4 ??#?.?#????.? 1,4
+            // No need to process this path if we've already got it cached
             var result = GetCacheResult(groups, row);
             if(result >= 0)
                 return result;
@@ -157,12 +157,10 @@ namespace AOC2023.Day12
             // An empty group with '#' means we didn't found a valid pattern
             if (groups.Count == 0 && row.Contains('#'))
             {
-               // Console.WriteLine(fullrow);
                 return 0;
             }
             else if (groups.Count == 0)
             {
-               // Console.WriteLine(fullrow);
                 return 1;
             }
 
@@ -174,7 +172,6 @@ namespace AOC2023.Day12
             if (row.Length == 0 || group > maxLength || group > row.Length)
                 return 0;
 
-            // Leave the original lists unalterered 
             long combinations = 0;
 
             // A "." is not part of a group
@@ -186,9 +183,9 @@ namespace AOC2023.Day12
             // Might be start of a group
             else if (row[0] == '#')
             {
-                // ADD A CHECK TO ENSURE WE HAVE ENOGUH SPACE FOR A GROUP
+                // Ensure we have enough space for a group, along with a character 
+                // to act as a seperator
                 var testString = row.Substring(0, group);
-
                 if (!testString.Contains('.') && (group == row.Length || row[group] != '#'))
                 {
                     var newGroups = new Queue<int>(groups);
@@ -218,23 +215,16 @@ namespace AOC2023.Day12
                     // First, let's assume there is a '#' here
                     var newGroups = new Queue<int>(groups);
                     newGroups.Dequeue();
-                    var i = fullrow.Length - row.Length;
-                    fullrow[i] = '#';
                     var newRow = group == row.Length ? row.Substring(group) : row.Substring(group + 1);
                     combinations += FindValidCombinations(newGroups, newRow, fullrow);
-                    fullrow[i] = '.';
 
                     // Next, we assume there's a '.'
                     combinations += FindValidCombinations(new Queue<int>(groups), row.Substring(1), fullrow);
-                    fullrow[i] = '?';
                 }
                 // Nothing to act as a seperator, so this must be a '.'
                 else
                 {
-                    var i = fullrow.Length - row.Length;
-                    fullrow[i] = '.';
                     combinations += FindValidCombinations(new Queue<int>(groups), row.Substring(1), fullrow);
-                    fullrow[i] = '?';
                 }
             }
 
