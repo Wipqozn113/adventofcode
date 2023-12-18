@@ -7,6 +7,7 @@ using AOC2023.Day12;
 using AOC2023.Day14;
 using AOC2023.Day16;
 using AOC2023.Day17;
+using AOC2023.Day18;
 using System.ComponentModel.DataAnnotations;
 
 // See https://aka.ms/new-console-template for more information
@@ -57,6 +58,11 @@ while (day is not null && day.ToLower() != "exit")
     {
         D17.Part1();
         D17.Part2();
+    }
+    else if (day == "18")
+    {
+        D18.Part1();
+        D18.Part2();
     }
 
     Console.WriteLine("Which day would you like to run?  Enter EXIT to end program.\n");
