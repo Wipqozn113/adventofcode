@@ -6,11 +6,35 @@ using System.Threading.Tasks;
 
 namespace AOC2023.Day17
 {
+    struct NodeKey
+    {
+        public NodeKey(int id, Direction direction, int stepsInDirection)
+        {
+            NodeId = id;
+            Direction = direction;
+            StepsInDirection = stepsInDirection;
+        }
+
+        public int NodeId { get; set; }
+
+        public Direction Direction { get; set; }
+
+        public int StepsInDirection { get; set; }
+
+        public string AsString()
+        {
+            return NodeId.ToString() + ";" + Direction.ToString() + ";" + StepsInDirection.ToString();
+        }
+    }
+
     public class Node
     {
-        public Node(int heatLoss)
+        public Node(BasicNode node)
         {
-            HeatLoss = heatLoss;
+            ID = node.ID;
+            HeatLoss = node.HeatLoss;
+            X = node.X;
+            Y = node.Y;
         }
 
         public void CreateEdge(Node target, Direction direction)
@@ -19,9 +43,33 @@ namespace AOC2023.Day17
             Edges.Add(edge);
         }
 
+        public int X { get; set; }
+
+        public int Y { get; set; }
+
         public List<Edge> Edges = new List<Edge>();
 
+        public int ID { get; set; }
+
         public int HeatLoss { get; set; }
+
+        public Direction Direction { get; set; }
+
+        public int StepsWithoutTurning { get; set; }
+
+        public List<Node> Path { get; set; } = new List<Node>();
+
+        public string Key
+        {
+            get
+            {
+                var key = ID.ToString();
+                key += ";" + HeatLoss.ToString();
+                key += ";" + Direction.ToString();
+                key += ";" + StepsWithoutTurning.ToString();
+                return key;
+            }
+        }
     }
 
     public class Edge
@@ -45,16 +93,6 @@ namespace AOC2023.Day17
             {
                 return Target.HeatLoss;
             }
-        }
-        
-
-    }
-
-    public enum Direction
-    {
-        North,
-        East,
-        South,
-        West
+        }      
     }
 }
