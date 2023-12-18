@@ -31,24 +31,23 @@ namespace AOCUtils.MathUtils
 
         public double CalculateArea()
         {
-            int n = Points.Count;
-            double a = 0.0;
-            for (int i = 0; i < n - 1; i++)
+            var area = 0.0;
+            for (int i = 0; i < Points.Count - 1; i++)
             {
-                a += Points[i].X * Points[i + 1].Y - Points[i + 1].X * Points[i].Y;
+                area += Points[i].X * Points[i + 1].Y - Points[i + 1].X * Points[i].Y;
             }
-            return Math.Abs(a + Points[n - 1].X * Points[0].Y - Points[0].X * Points[n - 1].Y) / 2.0;    
+            return Math.Abs(area + Points[Points.Count - 1].X * Points[0].Y - Points[0].X * Points[Points.Count - 1].Y) / 2.0;    
         }
 
         public double CalculatePerimeter()
         {
-            double p = 0.0;
+            var perm = 0.0;
             for (int i = 0; i < Points.Count - 1; i++)
             {
-                p += Math.Sqrt(Math.Pow(Points[i + 1].X - Points[i].X, 2) + Math.Pow(Points[i + 1].Y - Points[i].Y, 2));
+               perm += Math.Sqrt(Math.Pow(Points[i + 1].X - Points[i].X, 2) + Math.Pow(Points[i + 1].Y - Points[i].Y, 2));
             }
-            p += Math.Sqrt(Math.Pow(Points[0].X - Points[Points.Count - 1].X, 2) + Math.Pow(Points[0].Y - Points[Points.Count - 1].Y, 2));
-            return p;
+            perm += Math.Sqrt(Math.Pow(Points[0].X - Points[Points.Count - 1].X, 2) + Math.Pow(Points[0].Y - Points[Points.Count - 1].Y, 2));
+            return perm;
         }
 
     }
