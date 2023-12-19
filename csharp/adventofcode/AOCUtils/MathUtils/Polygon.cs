@@ -21,6 +21,10 @@ namespace AOCUtils.MathUtils
             Points.Add(coord);
         }
 
+        /// <summary>
+        /// Calcualtes the total area, including the edges.
+        /// </summary>
+        /// <returns></returns>
         public double CalculateInclusiveArea()
         {
             var area = CalculateArea();
@@ -31,6 +35,7 @@ namespace AOCUtils.MathUtils
 
         public double CalculateArea()
         {
+            // Shoelace formula
             var area = 0.0;
             for (int i = 0; i < Points.Count - 1; i++)
             {

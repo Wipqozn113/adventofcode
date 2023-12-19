@@ -48,7 +48,7 @@ namespace AOC2023.Day17
         private double DijkstraState(BasicNode source, BasicNode target)
         {
             // Initialize all distances (except source to source) to Infinity
-            var start = Nodes.Where(x => x.ID == source.ID && x.StepsWithoutTurning == 0 && x.Direction == Direction.None).First();
+            var start = Nodes.Where(x => x.ID == source.ID).First();
             var queue = new PriorityQueue<Node, double>();
             var distances = new Dictionary<Node, double>();
             distances[start] = 0;
@@ -253,7 +253,67 @@ namespace AOC2023.Day17
 
         private void CreateStateNodesPart2()
         {
+            var startNode = new Node(BasicNodes[0][0]);
+            Nodes.Add(startNode);
+            var nodes = new Queue<Node>();
+            nodes.Enqueue(startNode);
 
+
+            while (nodes.Any())
+            {
+                var node = nodes.Dequeue();
+                var basicNode = BasicNodes.SelectMany(l => l).Where(x => x.ID == node.ID).First();
+
+                // We're going to assume we  should never go North or West, because it would mean going at least 4 spaces
+
+                // Construct the southern edge and state node, if possible
+                if (node.Direction == Direction.None ||
+                    (node.Direction == Direction.South && node.StepsWithoutTurning < 9) ||
+                    (node.Direction == Direction.East && node.StepsWithoutTurning >= 3))
+                {
+                    var southNode = basicNode.Edges.Where(x => x.Direction == Direction.South).FirstOrDefault()?.Target;
+                    if (southNode is not null &&
+                        (node.Direction == Direction.None || node.Direction == Direction.South || (Direction.East == node.Direction && BasicNodes.Count > node.Y + 4)))
+                    {     
+                        var newNode = new Node(southNode);
+                        newNode.Direction = Direction.South;
+                        newNode.StepsWithoutTurning = node.Direction == Direction.South ? node.StepsWithoutTurning + 1 : 0;
+                        node.CreateEdge(newNode, Direction.South);
+                        if (!Hashmap.ContainsKey(newNode.Key))
+                        {
+                            nodes.Enqueue(newNode);
+                            Nodes.Add(newNode);
+                            Hashmap[newNode.Key] = newNode;
+                            newNode.Path.AddRange(node.Path);
+                            newNode.Path.Add(node);
+                        }
+                    }
+                }
+
+                // Construct the eastern edge and state node, if possible
+                if (node.Direction == Direction.None ||  
+                    (node.Direction == Direction.East && node.StepsWithoutTurning < 9) ||
+                    (node.Direction == Direction.South && node.StepsWithoutTurning >= 3))
+                {
+                    var eastNode = basicNode.Edges.Where(x => x.Direction == Direction.East).FirstOrDefault()?.Target;
+                    if (eastNode is not null &&
+                        (node.Direction == Direction.None || node.Direction == Direction.East || (Direction.South == node.Direction && BasicNodes[node.Y].Count > node.X + 4)))
+                    {
+                        var newNode = new Node(eastNode);
+                        newNode.Direction = Direction.East;
+                        newNode.StepsWithoutTurning = node.Direction == Direction.East ? node.StepsWithoutTurning + 1 : 0;
+                        node.CreateEdge(newNode, Direction.East);
+                        if (!Hashmap.ContainsKey(newNode.Key))
+                        {
+                            nodes.Enqueue(newNode);
+                            Nodes.Add(newNode);
+                            Hashmap[newNode.Key] = newNode;
+                            newNode.Path.AddRange(node.Path);
+                            newNode.Path.Add(node);
+                        }
+                    }
+                }
+            }
         }
 
         private void CreateBasicNodes(List<string> lines)
