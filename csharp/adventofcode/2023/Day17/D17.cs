@@ -22,7 +22,8 @@ namespace AOC2023.Day17
 
         public static Graph CreateGraph(bool part1)
         {
-            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day17\\test.txt";
+            // test3 should be 34 (42 is incorrect since I refuse to backtrack)
+            string path = "C:\\Users\\Owner\\Development\\adventofcode\\csharp\\adventofcode\\2023\\Day17\\input.txt";
             var lines = File.ReadLines(path).ToList();
             var graph = new Graph(lines, part1);
 

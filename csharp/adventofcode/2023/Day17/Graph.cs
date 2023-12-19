@@ -264,16 +264,68 @@ namespace AOC2023.Day17
                 var node = nodes.Dequeue();
                 var basicNode = BasicNodes.SelectMany(l => l).Where(x => x.ID == node.ID).First();
 
-                // We're going to assume we  should never go North or West, because it would mean going at least 4 spaces
+                // Construct the northern edge and state node, if possible
+                if ((node.Direction == Direction.North && node.StepsWithoutTurning < 9) ||
+                    (node.Direction == Direction.East && node.StepsWithoutTurning >= 3) ||
+                    (node.Direction == Direction.West && node.StepsWithoutTurning >= 3))
+                {
+                    var northNode = basicNode.Edges.Where(x => x.Direction == Direction.North).FirstOrDefault()?.Target;
+                    if (northNode is not null &&
+                        (node.Direction == Direction.North ||
+                        ((Direction.East == node.Direction || Direction.West == node.Direction) && 0 <= node.Y - 4)))
+                    {
+                        var newNode = new Node(northNode);
+                        newNode.Direction = Direction.North;
+                        newNode.StepsWithoutTurning = node.Direction == Direction.North ? node.StepsWithoutTurning + 1 : 0;
+                        node.CreateEdge(newNode, Direction.North);
+                        if (!Hashmap.ContainsKey(newNode.Key))
+                        {
+                            nodes.Enqueue(newNode);
+                            Nodes.Add(newNode);
+                            Hashmap[newNode.Key] = newNode;
+                            newNode.Path.AddRange(node.Path);
+                            newNode.Path.Add(node);
+                        }
+                    }
+                }
+
+
+                // Construct the western edge and state node, if possible
+                if ((node.Direction == Direction.West && node.StepsWithoutTurning < 9) ||
+                    (node.Direction == Direction.South && node.StepsWithoutTurning >= 3) ||
+                    (node.Direction == Direction.North && node.StepsWithoutTurning >= 3))
+                {
+                    var westNode = basicNode.Edges.Where(x => x.Direction == Direction.West).FirstOrDefault()?.Target;
+                    if (westNode is not null &&
+                        (node.Direction == Direction.West ||
+                        ((Direction.South == node.Direction || Direction.North == node.Direction) && 0 <= node.X - 4)))
+                    {
+                        var newNode = new Node(westNode);
+                        newNode.Direction = Direction.West;
+                        newNode.StepsWithoutTurning = node.Direction == Direction.West ? node.StepsWithoutTurning + 1 : 0;
+                        node.CreateEdge(newNode, Direction.West);
+                        if (!Hashmap.ContainsKey(newNode.Key))
+                        {
+                            nodes.Enqueue(newNode);
+                            Nodes.Add(newNode);
+                            Hashmap[newNode.Key] = newNode;
+                            newNode.Path.AddRange(node.Path);
+                            newNode.Path.Add(node);
+                        }
+                    }
+                }
+
 
                 // Construct the southern edge and state node, if possible
                 if (node.Direction == Direction.None ||
                     (node.Direction == Direction.South && node.StepsWithoutTurning < 9) ||
-                    (node.Direction == Direction.East && node.StepsWithoutTurning >= 3))
+                    (node.Direction == Direction.East && node.StepsWithoutTurning >= 3) ||
+                    (node.Direction == Direction.West && node.StepsWithoutTurning >= 3))
                 {
                     var southNode = basicNode.Edges.Where(x => x.Direction == Direction.South).FirstOrDefault()?.Target;
                     if (southNode is not null &&
-                        (node.Direction == Direction.None || node.Direction == Direction.South || (Direction.East == node.Direction && BasicNodes.Count > node.Y + 4)))
+                        (node.Direction == Direction.None || node.Direction == Direction.South || 
+                        ((Direction.East == node.Direction || Direction.West == node.Direction) && BasicNodes.Count > node.Y + 4)))
                     {     
                         var newNode = new Node(southNode);
                         newNode.Direction = Direction.South;
@@ -293,11 +345,13 @@ namespace AOC2023.Day17
                 // Construct the eastern edge and state node, if possible
                 if (node.Direction == Direction.None ||  
                     (node.Direction == Direction.East && node.StepsWithoutTurning < 9) ||
-                    (node.Direction == Direction.South && node.StepsWithoutTurning >= 3))
+                    (node.Direction == Direction.South && node.StepsWithoutTurning >= 3) ||
+                    (node.Direction == Direction.North && node.StepsWithoutTurning >= 3))
                 {
                     var eastNode = basicNode.Edges.Where(x => x.Direction == Direction.East).FirstOrDefault()?.Target;
                     if (eastNode is not null &&
-                        (node.Direction == Direction.None || node.Direction == Direction.East || (Direction.South == node.Direction && BasicNodes[node.Y].Count > node.X + 4)))
+                        (node.Direction == Direction.None || node.Direction == Direction.East || 
+                        ((Direction.South == node.Direction || Direction.North == node.Direction) && BasicNodes[node.Y].Count > node.X + 4)))
                     {
                         var newNode = new Node(eastNode);
                         newNode.Direction = Direction.East;
