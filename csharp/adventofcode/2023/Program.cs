@@ -8,6 +8,8 @@ using AOC2023.Day14;
 using AOC2023.Day16;
 using AOC2023.Day17;
 using AOC2023.Day18;
+using AOC2023.Day19;
+using AOC2023.Day20;
 using System.ComponentModel.DataAnnotations;
 
 // See https://aka.ms/new-console-template for more information
@@ -63,6 +65,20 @@ while (day is not null && day.ToLower() != "exit")
     {
         D18.Part1();
         D18.Part2();
+    }
+    else if (day == "19")
+    {
+        D19.Part1();
+        D19.Part2();
+    }
+    else if (day == "20")
+    {
+        D20.Part1();
+        D20.Part2();
+    }
+    else
+    {
+        Console.WriteLine("Invalid input!");
     }
 
     Console.WriteLine("Which day would you like to run?  Enter EXIT to end program.\n");
