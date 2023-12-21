@@ -12,9 +12,9 @@ namespace AOC2023.Day20
 
         public void RecievePulse(Pulse pulse, IModule module);
 
-        public void SendPulse();
+        public bool SendPulse();
 
-        public void PopulateChildren(List<IModule> modules);
+        public List<SinkModule> PopulateChildren(List<IModule> modules);
 
     }
 }

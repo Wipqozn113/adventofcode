@@ -9,6 +9,12 @@ namespace AOC2023.Day20
 {
     public class Graph
     {
+        public Graph()
+        {
+            var rx = new SinkModule("rx", this, new List<string>());
+            Modules.Add(rx);
+        }
+
         public List<IModule> Modules { get; set; } = new List<IModule>();
 
         public Queue<IModule> ModulesQueue { get; set; } = new Queue<IModule>();
@@ -28,8 +34,6 @@ namespace AOC2023.Day20
 
         public void AddModule(string line)
         {
-            // %zt -> pb, bt
-            // broadcaster -> sj, sr, tp, nk
             var ln = line.Split("->");
             var name = "";
             var moduleType = 'b';
@@ -65,11 +69,12 @@ namespace AOC2023.Day20
         }
 
         public void PopulateChildren()
-        {
+        {            
             foreach (IModule module in Modules)
             {
                 module.PopulateChildren(Modules);
             }
+            
         }
 
         public long PressButton(long pressCount)
@@ -85,6 +90,23 @@ namespace AOC2023.Day20
             }
 
             return LowPulses * HighPulses;
+        }
+        public long PressButton()
+        {
+            var i = 0;
+            while(true)
+            {
+                i++;
+                BroadcasterModule.RecievePulse(Pulse.Low, BroadcasterModule);
+                while (ModulesQueue.Any())
+                {
+                    var module = ModulesQueue.Dequeue();
+                    if(module.SendPulse())
+                    {
+                        return i;
+                    }
+                }
+            }
         }
     }
 }

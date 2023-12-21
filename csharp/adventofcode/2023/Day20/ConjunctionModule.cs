@@ -34,21 +34,23 @@ namespace AOC2023.Day20
             }
         }
 
-        public override void SendPulse()
+        public override bool SendPulse()
         {
             (var pulse, var moduleName) = PulseQueue.Dequeue();
             PulseMemory[moduleName] = pulse;
 
-            var newPulse = Pulse.High;
-            if(PulseMemory.Where(x => x.Value == Pulse.High).Any())
+            var newPulse = Pulse.Low;
+            if(PulseMemory.Where(x => x.Value == Pulse.Low).Any())
             {
-                newPulse = Pulse.Low;
+                newPulse = Pulse.High;
             }
 
             foreach (var module in Output)
             {
                 module.Child.RecievePulse(newPulse, this);
             }
+
+            return false;
         }
     }
 }

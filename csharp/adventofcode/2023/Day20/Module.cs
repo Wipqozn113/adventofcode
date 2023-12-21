@@ -17,21 +17,26 @@ namespace AOC2023.Day20
 
         public abstract void RecievePulse(Pulse pulse, IModule module);
 
-        public abstract void SendPulse();
+        public abstract bool SendPulse();
 
-        public  void PopulateChildren(List<IModule> modules)
+        public List<SinkModule> PopulateChildren(List<IModule> modules)
         {
+            var sinks = new List<SinkModule>();
+
             foreach (var childName in ChildrenNames)
             {
                 var child = modules.Where(x => x.Name == childName).First();
+
                 var edge = new Edge(this, child);
                 Output.Add(edge);
-                if(child is ConjunctionModule)
+                if (child is ConjunctionModule)
                 {
                     var cj = (ConjunctionModule)child;
                     cj.InitMemory(Name);
                 }
             }
+
+            return sinks;
         }
 
         public List<string> ChildrenNames { get; set; }

@@ -30,7 +30,7 @@ namespace AOC2023.Day20
             }
         }
 
-        public override void SendPulse()
+        public override bool SendPulse()
         {
             var pulse = PulseQueue.Dequeue();
             if(pulse == Pulse.Low)
@@ -52,6 +52,8 @@ namespace AOC2023.Day20
                     }
                 }
             }
+
+            return false;
         }
     }
 }
