@@ -94,7 +94,6 @@ namespace AOC2023.Day20
         }
         public long PressButton()
         {
-            var lcmModules = new List<string> { "nb", "vc", "vg", "ls" };
             var lcmModulesVals = new Dictionary<string, long>();    
             long i = 0;
             while(lcmModulesVals.Count < 4)
