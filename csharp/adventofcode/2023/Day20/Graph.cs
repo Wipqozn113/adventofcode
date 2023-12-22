@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using AOCUtils.MathUtils;
 
 namespace AOC2023.Day20
 {
@@ -93,20 +94,30 @@ namespace AOC2023.Day20
         }
         public long PressButton()
         {
-            var i = 0;
-            while(true)
+            var lcmModules = new List<string> { "nb", "vc", "vg", "ls" };
+            var lcmModulesVals = new Dictionary<string, long>();    
+            long i = 0;
+            while(lcmModulesVals.Count < 4)
             {
                 i++;
                 BroadcasterModule.RecievePulse(Pulse.Low, BroadcasterModule);
                 while (ModulesQueue.Any())
-                {
+                {     
                     var module = ModulesQueue.Dequeue();
                     if(module.SendPulse())
                     {
-                        return i;
+                        lcmModulesVals[module.Name] = i;
                     }
-                }
+                }         
             }
+
+            var lcmVals = new List<long>();
+            foreach(var val in lcmModulesVals.Values)
+            {
+                lcmVals.Add(val);
+            }
+
+            return Core.LCM(lcmVals);
         }
     }
 }

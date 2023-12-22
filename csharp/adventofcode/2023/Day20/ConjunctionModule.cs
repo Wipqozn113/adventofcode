@@ -36,6 +36,7 @@ namespace AOC2023.Day20
 
         public override bool SendPulse()
         {
+            var lgLow = false;
             (var pulse, var moduleName) = PulseQueue.Dequeue();
             PulseMemory[moduleName] = pulse;
 
@@ -47,10 +48,14 @@ namespace AOC2023.Day20
 
             foreach (var module in Output)
             {
+                if(module.Child.Name == "lg" && newPulse == Pulse.High)
+                {
+                    lgLow = true;
+                }
                 module.Child.RecievePulse(newPulse, this);
             }
 
-            return false;
+            return lgLow; 
         }
     }
 }
