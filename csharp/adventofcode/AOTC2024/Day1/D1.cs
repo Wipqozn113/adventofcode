@@ -15,9 +15,12 @@ namespace AOTC2024.Day1
             var filename = "input.txt";
             var left = new List<int>();
             var right = new List<int>();
+
             PopulateFromFile(filename, left, right);
+
             left.Sort();
             right.Sort();
+
             var total = 0;
             for(int i  = 0; i < left.Count; i++)
             {
@@ -32,7 +35,9 @@ namespace AOTC2024.Day1
             var filename = "input.txt";
             var left = new List<int>();
             var right = new List<int>();
+
             PopulateFromFile(filename, left, right);
+
             var total = 0;
             foreach(var l in left)
             {
