@@ -11,18 +11,44 @@ namespace AOTC2024.Day2
     {
         public static void Part1()
         {
-            Console.WriteLine("Part 1: NOT IMPLEMENTED");
+            var reports = new List<Report>();
+            ParseInputFromFile("input.txt", reports);
+            var safeCount = 0;
+            foreach (var report in reports)
+            {
+                if(report.IsSafeWithoutDampener())
+                {
+                    safeCount++;
+                }
+            }
+
+            Console.WriteLine($"Part 1: {safeCount}");
         }
 
         public static void Part2()
         {
-            Console.WriteLine("Part 2: NOT IMPLEMENTED");
+            var reports = new List<Report>();
+            ParseInputFromFile("input.txt", reports);
+            var safeCount = 0;
+            foreach (var report in reports)
+            {
+                if (report.IsSafeWithDampener())
+                {
+                    safeCount++;
+                }
+            }
+
+            Console.WriteLine($"Part 2: {safeCount}");
         }
 
-        public static void ParseInputFromFile(string filename)
+        public static void ParseInputFromFile(string filename, List<Report> reports)
         {
             string path = $"{Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName}\\Day2\\{filename}";
             var lines = File.ReadLines(path);
+            foreach(var line in lines)
+            {
+                reports.Add(new Report(line.Trim().Split(' ').Select(x => int.Parse(x)).ToList()));
+            }
         }
     }
 }
