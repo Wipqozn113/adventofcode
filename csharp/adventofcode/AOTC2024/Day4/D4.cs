@@ -11,7 +11,9 @@ namespace AOTC2024.Day4
     {
         public static void Part1()
         {
-            Console.WriteLine("Part 1: NOT IMPLEMENTED");
+            var wordsearch = ParseInputFromFile("test.txt");
+            var count = wordsearch.CountInstancesOfWord("XMAS");
+            Console.WriteLine($"Part 1: {count}");
         }
 
         public static void Part2()
@@ -19,10 +21,11 @@ namespace AOTC2024.Day4
             Console.WriteLine("Part 2: NOT IMPLEMENTED");
         }
 
-        public static void ParseInputFromFile(string filename)
+        public static Wordsearch ParseInputFromFile(string filename)
         {
             string path = $"{Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName}\\Day4\\{filename}";
-            var lines = File.ReadLines(path);
+            var lines = File.ReadLines(path).ToList();
+            return new Wordsearch(lines);
         }
     }
 }
