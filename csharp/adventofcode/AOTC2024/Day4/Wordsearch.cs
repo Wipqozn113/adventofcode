@@ -5,6 +5,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
+using AOCUtils.MathUtils;
 
 namespace AOTC2024.Day4
 {
@@ -15,35 +17,94 @@ namespace AOTC2024.Day4
             Lines = lines.ToList();
         }
 
-        public List<string> Lines { get; set; } 
+        public List<string> Lines { get; set; }
 
-        public int CountInstancesOfWord(string word)
+        public int CountInstancesOfXMas()
         {
             var total = 0;
-            var y = 0;
-
-
-            while(y < Lines.Count)
-            { 
-                var line = CreateHorizontalLine(y);
-                total += CountInstancesOfWordInLine(word, line);
-
-                for (var x = 0; x < line.Length; x++)                
+            for (var y = 0; y < Lines.Count; y++)
+            {
+                for (var x = 0; x < Lines[y].Length; x++)
                 {
-                    line = CreateVerticalLine(x);
-                    total += CountInstancesOfWordInLine(word, line);
-
-                    line = CreateDiagonalLine(x, y);
-                    total += CountInstancesOfWordInLine(word, line);
+                    if (Lines[y][x] == 'A'
+                        && y > 0 && y < Lines.Count - 1
+                        && x > 0 && x < Lines[y].Length - 1)
+                    {
+                        if (Lines[y - 1][x - 1] == 'M' || Lines[y - 1][x - 1] == 'S')
+                        {
+                            var other = Lines[y - 1][x - 1] == 'M' ? 'S' : 'M';
+                            if (Lines[y + 1][x + 1] == other)
+                            {
+                                if (Lines[y - 1][x + 1] == 'M' || Lines[y - 1][x + 1] == 'S')
+                                {
+                                    other = Lines[y - 1][x + 1] == 'M' ? 'S' : 'M';
+                                    if (Lines[y + 1][x - 1] == other)
+                                    {
+                                        total += 1;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-
-                y++;
             }
 
             return total;
         }
 
-        private int CountInstancesOfWordInLine(string line, string word)
+        public int CountInstancesOfWord(string word)
+        {
+            var total = 0;
+
+            for (var y = 0; y < Lines.Count; y++)
+            {
+                var line = CreateHorizontalLine(y);
+                total += CountInstancesOfWordInLine(word, line);
+            }
+
+            for (var x = 0; x < Lines[0].Length; x++)
+            {
+                var line = CreateVerticalLine(x);
+                total += CountInstancesOfWordInLine(word, line);
+            }
+
+            for (var y = 0; y < Lines.Count; y++)
+            {
+                if (y > 0)
+                {
+                    var line = CreateDiagonalLine(0, y);
+                    total += CountInstancesOfWordInLine(word, line);
+                }
+                else
+                {
+                    for (var x = 0; x < Lines.Count; x++)
+                    {
+                        var line = CreateDiagonalLine(x, y);
+                        total += CountInstancesOfWordInLine(word, line);
+                    }
+                } 
+            }
+            for (var y = 0; y < Lines.Count; y++)
+            {
+                if (y > 0)
+                {
+                    var line = CreateDiagonalLine(Lines.Count - 1, y, true);
+                    total += CountInstancesOfWordInLine(word, line);
+                }
+                else
+                {
+                    for (var x = 0; x < Lines.Count; x++)
+                    {
+                        var line = CreateDiagonalLine(x, y, true);
+                        total += CountInstancesOfWordInLine(word, line);
+                    }
+                }
+            }
+
+            return total;
+        } 
+
+        private int CountInstancesOfWordInLine(string word, string line)
         {
             var count = 0;
             var matches = Regex.Matches(line, word, RegexOptions.IgnoreCase);
@@ -70,14 +131,16 @@ namespace AOTC2024.Day4
             {
                 line += Lines[i][startingX];
             }
+            
             return line;
         }
 
-        private string CreateDiagonalLine(int startingX, int startingY)
+        private string CreateDiagonalLine(int startingX, int startingY, bool reverse = false)
         {
             var line = "";
             var x = startingX;
             var y = startingY;
+
             while(true)
             {
                 try
@@ -85,13 +148,14 @@ namespace AOTC2024.Day4
                     var c = Lines[y][x];
                     line += c;
                     y++;
-                    x++;
+                    x = reverse ? x - 1 : x + 1;
                 }
                 catch (Exception)
                 {
                     break;
                 }
-            }
+            }            
+
             return line;
         }
     }

@@ -17,6 +17,11 @@ namespace AOCUtils.MathUtils
         public long X { get; set; }
 
         public long Y { get; set; }  
+
+        public bool AreEqual(Coordinate other)
+        {
+            return (X == other.X && Y == other.Y);
+        }
     
         public long ManhattenDistance(Coordinate other) 
         {

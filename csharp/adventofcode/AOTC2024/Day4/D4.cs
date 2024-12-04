@@ -11,14 +11,16 @@ namespace AOTC2024.Day4
     {
         public static void Part1()
         {
-            var wordsearch = ParseInputFromFile("test.txt");
+            var wordsearch = ParseInputFromFile("input.txt");
             var count = wordsearch.CountInstancesOfWord("XMAS");
             Console.WriteLine($"Part 1: {count}");
         }
 
         public static void Part2()
         {
-            Console.WriteLine("Part 2: NOT IMPLEMENTED");
+            var wordsearch = ParseInputFromFile("input.txt");
+            var count = wordsearch.CountInstancesOfXMas();
+            Console.WriteLine($"Part 2: {count}");
         }
 
         public static Wordsearch ParseInputFromFile(string filename)
