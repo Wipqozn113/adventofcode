@@ -11,18 +11,23 @@ namespace AOTC2024.Day5
     {
         public static void Part1()
         {
-            Console.WriteLine("Part 1: NOT IMPLEMENTED");
+            var printer = ParseInputFromFile("input.txt");
+            var total = printer.Calc();
+            Console.WriteLine($"Part 1: {total}");
         }
 
         public static void Part2()
         {
-            Console.WriteLine("Part 2: NOT IMPLEMENTED");
+            var printer = ParseInputFromFile("input.txt");
+            var total = printer.CalcIncorrectPages();
+            Console.WriteLine($"Part 2: {total}");
         }
 
-        public static void ParseInputFromFile(string filename)
+        public static Printer ParseInputFromFile(string filename)
         {
             string path = $"{Directory.GetParent(Environment.CurrentDirectory)?.Parent?.Parent?.FullName}\\Day5\\{filename}";
-            var lines = File.ReadLines(path);
+            var lines = File.ReadLines(path).ToList();
+            return new Printer(lines);
         }
     }
 }
