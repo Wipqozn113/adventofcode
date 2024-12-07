@@ -18,7 +18,9 @@ namespace AOTC2024.Day6
 
         public static void Part2()
         {
-            Console.WriteLine("Part 2: NOT IMPLEMENTED");
+            var guard = ParseInputFromFile("input.txt");
+            var count = guard.CountPossibleLoops();
+            Console.WriteLine($"Part 2: {count}");
         }
 
         public static Guard ParseInputFromFile(string filename)

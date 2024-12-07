@@ -1,31 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using AOCUtils.MathUtils;
 
 namespace AOTC2024.Day6
 {
+    public enum Facing
+    {
+        North,
+        East,
+        South,
+        West
+    }
+
     public class Guard
     {
-        private enum Facing
+        private enum State 
         {
-            North,
-            East,
-            South,
-            West
+            Fine,
+            Looping,
+            OutsideMap
         }
 
         public  Guard(Map map)
         {
             Map = map;
+            OriginalMap = map;
             CurrentLocation = map.GuardStartingCoordinate;
+            StartingLocation = new CoordinateInt(CurrentLocation.X, CurrentLocation.Y);
         }
+
+        public Map OriginalMap { get; set; }
 
         public Map Map { get; set; }
 
         public CoordinateInt CurrentLocation { get; set; }
+
+        public CoordinateInt StartingLocation { get; set; }
 
         private Facing CurrentFacing { get; set; } = Facing.North;
 
@@ -33,13 +47,13 @@ namespace AOTC2024.Day6
         /// Guard takes an action
         /// </summary>
         /// <returns>Returns TRUE if the guard is still within the map; False otherwise.</returns>
-        public bool Act()
+        private State Act()
         {
             if (CanMove())
                 return Move();
             
             ChangeFacing();
-            return true;
+            return State.Fine;
         }
 
         private bool CanMove()
@@ -49,17 +63,20 @@ namespace AOTC2024.Day6
             return true;
         }
 
-        private bool Move()
+        private State Move()
         {
             if (Map.IsWithinMap(NextCoordinate()))
             {
                 CurrentLocation = NextCoordinate();
-                Map.MarkVisited(CurrentLocation);
-                return true;
+                if (Map.MarkVisited(CurrentLocation, CurrentFacing))
+                {                   
+                    return State.Looping;
+                }
+                return State.Fine;
             }
             else
             {
-                return false;
+                return State.OutsideMap;
             }
         }
 
@@ -89,9 +106,40 @@ namespace AOTC2024.Day6
 
         public int CountUniqueSquaresVisited()
         {
-            while (Act()) ;
-
+            while (Act() == State.Fine) ;
+            CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
             return Map.SquaresVisited();
+        }
+
+        public int CountPossibleLoops()
+        {
+            var maps = Map.CreateTheorticalMaps();
+            var total = 0;
+
+            foreach (var map in maps) 
+            {               
+                Map = map;
+                
+                var state = State.Fine;
+                while(state == State.Fine)
+                {
+                    state = Act();          
+                }
+                
+                if (state == State.Looping)
+                    total++;
+                ResetMe();
+               // map.PrintMe();                    
+            }
+           
+            Map = OriginalMap;
+            return total;
+        }
+
+        private void ResetMe()
+        {
+            CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
+            CurrentFacing = Facing.North;
         }
     }
 }

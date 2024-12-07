@@ -10,6 +10,12 @@ namespace AOTC2024.Day6
 {
     public class Map
     {
+        public Map(List<List<Square>> squares, CoordinateInt guardStartingCoordinate)
+        {
+            Squares = squares;
+            GuardStartingCoordinate = guardStartingCoordinate;
+        }
+
         public Map(List<string> input)
         {
             Squares = new List<List<Square>>();
@@ -28,6 +34,7 @@ namespace AOTC2024.Day6
                     if (c == '^')
                     {
                         square.Visited = true;
+                        square.HasGuard = true;
                         GuardStartingCoordinate = new CoordinateInt(x, y);
                     }
                     squares.Add(square);
@@ -38,11 +45,37 @@ namespace AOTC2024.Day6
             }
         }        
 
-        private class Square
+        public class Square
         {
             public bool Visited { get; set; }
 
             public bool HasObstacle { get; set; }   
+
+            public bool HasGuard { get; set; }
+
+            public List<Facing> Facings { get; set; } = new List<Facing>();
+
+            // Returns true if this located was already visited with this facing
+            public bool MarkVisited(Facing facing)
+            {
+                var insideLoop = Facings.Contains(facing) && Visited;
+
+                Visited = true;
+                Facings.Add(facing);
+
+                return insideLoop;
+            }
+
+            public Square Copy()
+            {
+                return new Square()
+                {
+                    Visited = false,
+                    HasObstacle = HasObstacle,
+                    HasGuard = HasGuard,    
+                    Facings = new List<Facing>()
+                };
+            }
         }
 
         private List<List<Square>> Squares { get; set; }
@@ -60,9 +93,10 @@ namespace AOTC2024.Day6
             return visited;
         }
 
-        public void MarkVisited(CoordinateInt coordinate)
+        // Returns true if location already visited with same facing
+        public bool MarkVisited(CoordinateInt coordinate, Facing facing)
         {
-            Squares[coordinate.Y][coordinate.X].Visited = true;
+            return Squares[coordinate.Y][coordinate.X].MarkVisited(facing);           
         }
 
         public bool IsBlocked(CoordinateInt coordinate)
@@ -84,6 +118,63 @@ namespace AOTC2024.Day6
             {
                 return false;
             }
+        }
+
+        public List<Map> CreateTheorticalMaps()
+        {
+            var maps = new List<Map>();
+            
+            foreach(var square in Squares.SelectMany(s => s))
+            {
+                if (square.HasObstacle || square.HasGuard)
+                    continue;
+                
+                square.HasObstacle = true;
+
+                var map = Copy();
+                maps.Add(map);
+
+                square.HasObstacle = false;
+                
+            }
+
+            return maps;
+        }
+
+        public Map Copy()
+        {
+            var newSquares = new List<List<Square>>();            
+
+            foreach(var squares in Squares)
+            {
+                var newSqrs = new List<Square>();
+                foreach(var square in squares)
+                {
+                    var sqr = square.Copy();
+                    newSqrs.Add(sqr);
+                }
+                newSquares.Add(newSqrs);
+            }
+
+            return new Map(newSquares, GuardStartingCoordinate);
+        }
+
+        public void PrintMe()
+        {
+            foreach(var squares in Squares)
+            {
+                var line = "";
+                foreach(var square in squares)
+                {
+                    var l = square.HasObstacle ? "#" : ".";
+                    if (square.Visited)
+                        l = "V";
+                    line += l;
+                }
+                Console.WriteLine(line);
+            }
+            Console.WriteLine();
+            Console.WriteLine();
         }
     }
 }
