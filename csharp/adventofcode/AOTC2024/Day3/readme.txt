@@ -8,7 +8,7 @@ What is Advent of Code?
 
 Advent of Code is an annual "advent calender" of programming puzzles that started in 2015. Each day from December 1 - 25
 a new programming problem is posted, and the problems increase in complexity with each day (with weekends being a difficulty spike). 
-Each problem is divided into two parts, although part 2 isn't accessible until you solve part 2. Advent of Code was created 
+Each problem is divided into two parts, although part 2 isn't accessible until you solve part 1. Advent of Code was created 
 by Eric Wastl, and is hosted at https://adventofcode.com/. 
 
 What is the Day 3 problem?
