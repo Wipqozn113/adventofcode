@@ -1,4 +1,5 @@
-﻿using AOCUtils.MathUtils;
+﻿using System.Threading.Tasks;
+using AOCUtils.MathUtils;
 
 namespace AOTC2024.Day6
 {
@@ -63,7 +64,8 @@ namespace AOTC2024.Day6
             {
                 CurrentLocation = NextCoordinate();
                 if (Map.HasVisited(CurrentLocation, CurrentFacing))
-                {                   
+                {
+                    Map.ContainsLoop = true;
                     return State.Looping;
                 }
                 return State.Fine;
@@ -122,19 +124,17 @@ namespace AOTC2024.Day6
         /// <returns>The number of map variations which will put the guard into a patrol loop.</returns>
         public int CountPossibleLoops()
         {
-            var maps = Map.CreateTheorticalMaps();
-            var total = 0;
+            while (Act() == State.Fine) ;
+            CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
+            var maps = Map.CreateTheorticalMaps();            
 
-            foreach (var map in maps) 
+            Parallel.ForEach(maps, map =>
             {
-                var guard = new Guard(map);            
-                
-                if (guard.PatrolLoops())
-                    total++;                       
-            }
-           
-            Map = OriginalMap;
-            return total;
+                var guard = new Guard(map);
+                guard.PatrolLoops();
+            });          
+
+            return maps.Where(m => m.ContainsLoop).Count();
         }
 
         /// <summary>

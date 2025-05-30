@@ -81,6 +81,8 @@ namespace AOTC2024.Day6
 
         public CoordinateInt GuardStartingCoordinate { get; private set; }
 
+        public bool ContainsLoop { get; set; } = false;
+
         /// <summary>
         /// The number of squared visited by the guard
         /// </summary>
@@ -133,20 +135,15 @@ namespace AOTC2024.Day6
         }
 
         /// <summary>
-        /// Creates all variations of the original map where a single empty square now contains an obstacle.
+        /// Creates 1 map variation per square the guard visited in the original map. 
         /// </summary>
-        /// <returns>A List<Map> containing all map variations</returns>
+        /// <returns>A List<Map> containing all map variations that could contain a loop.</returns>
         public List<Map> CreateTheorticalMaps()
         {
             var maps = new List<Map>();
             
-            foreach(var square in Squares.SelectMany(s => s))
-            {
-                // Square already has an obstacle or is the guards starting location, so 
-                // there's no need to test this variation.
-                if (square.HasObstacle || square.HasGuard)
-                    continue;
-                
+            foreach(var square in Squares.SelectMany(s => s).Where(sq => sq.Visited && !sq.HasGuard))
+            {                
                 square.HasObstacle = true;
 
                 var map = Copy();
