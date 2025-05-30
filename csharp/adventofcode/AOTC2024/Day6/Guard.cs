@@ -5,7 +5,7 @@ namespace AOTC2024.Day6
 {
     public class Guard
     {
-        private enum State 
+        private enum State
         {
             Fine,
             Looping,
@@ -29,6 +29,51 @@ namespace AOTC2024.Day6
         public CoordinateInt StartingLocation { get; set; }
 
         private Facing CurrentFacing { get; set; } = Facing.North;
+
+        /// <summary>
+        /// Calculates the number of unique squares the guard will visit on its patrol. 
+        /// </summary>
+        /// <returns>The number of unique squares the guard will visit on its patrol.</returns>
+        public int CountUniqueSquaresVisited()
+        {
+            while (Act() == State.Fine) ;
+            CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
+            return Map.SquaresVisited();
+        }
+
+        /// <summary>
+        /// Calculates the number of map variations which will put the guard into a patrol loop. 
+        /// </summary>
+        /// <returns>The number of map variations which will put the guard into a patrol loop.</returns>
+        public int CountPossibleLoops()
+        {
+            while (Act() == State.Fine) ;
+            CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
+            var maps = Map.CreateTheorticalMaps();
+
+            Parallel.ForEach(maps, map =>
+            {
+                var guard = new Guard(map);
+                guard.PatrolLoops();
+            });
+
+            return maps.Where(m => m.ContainsLoop).Count();
+        }
+
+        /// <summary>
+        /// Determines if the guards patrol loops
+        /// </summary>
+        /// <returns>TRUE if the patrol loops; FALSE otherwise</returns>
+        public bool PatrolLoops()
+        {
+            var state = State.Fine;
+            while (state == State.Fine)
+            {
+                state = Act();
+            }
+
+            return state == State.Looping;
+        }
 
         /// <summary>
         /// Guard takes an action
@@ -105,51 +150,6 @@ namespace AOTC2024.Day6
                 return new CoordinateInt(CurrentLocation.X, CurrentLocation.Y + 1);
             else 
                 return new CoordinateInt(CurrentLocation.X - 1, CurrentLocation.Y);
-        }
-
-        /// <summary>
-        /// Calculates the number of unique squares the guard will visit on its patrol. 
-        /// </summary>
-        /// <returns>The number of unique squares the guard will visit on its patrol.</returns>
-        public int CountUniqueSquaresVisited()
-        {
-            while (Act() == State.Fine) ;
-            CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
-            return Map.SquaresVisited();
-        }
-
-        /// <summary>
-        /// Calculates the number of map variations which will put the guard into a patrol loop. 
-        /// </summary>
-        /// <returns>The number of map variations which will put the guard into a patrol loop.</returns>
-        public int CountPossibleLoops()
-        {
-            while (Act() == State.Fine) ;
-            CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
-            var maps = Map.CreateTheorticalMaps();            
-
-            Parallel.ForEach(maps, map =>
-            {
-                var guard = new Guard(map);
-                guard.PatrolLoops();
-            });          
-
-            return maps.Where(m => m.ContainsLoop).Count();
-        }
-
-        /// <summary>
-        /// Determines if the guards patrol loops
-        /// </summary>
-        /// <returns>TRUE if the patrol loops; FALSE otherwise</returns>
-        public bool PatrolLoops()
-        {
-            var state = State.Fine;
-            while (state == State.Fine)
-            {
-                state = Act();
-            }
-
-            return state == State.Looping;
         }
     }
 }

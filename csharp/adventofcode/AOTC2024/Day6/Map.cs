@@ -4,12 +4,6 @@ namespace AOTC2024.Day6
 {
     public class Map
     {
-        private Map(List<List<Square>> squares, CoordinateInt guardStartingCoordinate)
-        {
-            Squares = squares;
-            GuardStartingCoordinate = guardStartingCoordinate;
-        }
-
         public Map(List<string> input)
         {
             Squares = new List<List<Square>>();
@@ -37,7 +31,13 @@ namespace AOTC2024.Day6
                 Squares.Add(squares);
                 y++;
             }
-        }        
+        }
+
+        private Map(List<List<Square>> squares, CoordinateInt guardStartingCoordinate)
+        {
+            Squares = squares;
+            GuardStartingCoordinate = guardStartingCoordinate;
+        }
 
         private class Square
         {
@@ -77,11 +77,11 @@ namespace AOTC2024.Day6
             }
         }
 
-        private List<List<Square>> Squares { get; set; }
-
         public CoordinateInt GuardStartingCoordinate { get; private set; }
 
         public bool ContainsLoop { get; set; } = false;
+
+        private List<List<Square>> Squares { get; set; }
 
         /// <summary>
         /// The number of squared visited by the guard
