@@ -1,21 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using AOCUtils.MathUtils;
+﻿using AOCUtils.MathUtils;
 
 namespace AOTC2024.Day6
 {
-    public enum Facing
-    {
-        North,
-        East,
-        South,
-        West
-    }
-
     public class Guard
     {
         private enum State 
@@ -46,7 +32,7 @@ namespace AOTC2024.Day6
         /// <summary>
         /// Guard takes an action
         /// </summary>
-        /// <returns>Returns TRUE if the guard is still within the map; False otherwise.</returns>
+        /// <returns>A State enum indicating the guards current state.</returns>
         private State Act()
         {
             if (CanMove())
@@ -56,6 +42,10 @@ namespace AOTC2024.Day6
             return State.Fine;
         }
 
+        /// <summary>
+        /// Determines if the Guard can move forward.
+        /// </summary>
+        /// <returns>TRUE if the guard can move; FALSE otherwise.</returns>
         private bool CanMove()
         {
             if (Map.IsBlocked(NextCoordinate()))
@@ -63,12 +53,16 @@ namespace AOTC2024.Day6
             return true;
         }
 
+        /// <summary>
+        /// Move the guard
+        /// </summary>
+        /// <returns>A State enum indicating the guards current state.</returns>
         private State Move()
         {
             if (Map.IsWithinMap(NextCoordinate()))
             {
                 CurrentLocation = NextCoordinate();
-                if (Map.MarkVisited(CurrentLocation, CurrentFacing))
+                if (Map.HasVisited(CurrentLocation, CurrentFacing))
                 {                   
                     return State.Looping;
                 }
@@ -80,6 +74,9 @@ namespace AOTC2024.Day6
             }
         }
 
+        /// <summary>
+        /// Rotate the guard 90 degrees clockwise
+        /// </summary>
         private void ChangeFacing()
         {
             if (CurrentFacing == Facing.North)
@@ -92,6 +89,10 @@ namespace AOTC2024.Day6
                 CurrentFacing = Facing.North;
         }
 
+        /// <summary>
+        /// Determine the square the guard wants to move into
+        /// </summary>
+        /// <returns></returns>
         private CoordinateInt NextCoordinate()
         {
             if (CurrentFacing == Facing.North)
@@ -104,6 +105,10 @@ namespace AOTC2024.Day6
                 return new CoordinateInt(CurrentLocation.X - 1, CurrentLocation.Y);
         }
 
+        /// <summary>
+        /// Calculates the number of unique squares the guard will visit on its patrol. 
+        /// </summary>
+        /// <returns>The number of unique squares the guard will visit on its patrol.</returns>
         public int CountUniqueSquaresVisited()
         {
             while (Act() == State.Fine) ;
@@ -111,6 +116,10 @@ namespace AOTC2024.Day6
             return Map.SquaresVisited();
         }
 
+        /// <summary>
+        /// Calculates the number of map variations which will put the guard into a patrol loop. 
+        /// </summary>
+        /// <returns>The number of map variations which will put the guard into a patrol loop.</returns>
         public int CountPossibleLoops()
         {
             var maps = Map.CreateTheorticalMaps();
@@ -128,14 +137,16 @@ namespace AOTC2024.Day6
                 
                 if (state == State.Looping)
                     total++;
-                ResetMe();
-               // map.PrintMe();                    
+                ResetMe();                    
             }
            
             Map = OriginalMap;
             return total;
         }
 
+        /// <summary>
+        /// Reset the guard to its starting location and facing.
+        /// </summary>
         private void ResetMe()
         {
             CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using AOCUtils.MathUtils;
+﻿using AOCUtils.MathUtils;
 
 namespace AOTC2024.Day6
 {
     public class Map
     {
-        public Map(List<List<Square>> squares, CoordinateInt guardStartingCoordinate)
+        private Map(List<List<Square>> squares, CoordinateInt guardStartingCoordinate)
         {
             Squares = squares;
             GuardStartingCoordinate = guardStartingCoordinate;
@@ -33,7 +27,7 @@ namespace AOTC2024.Day6
                         square.HasObstacle = true;
                     if (c == '^')
                     {
-                        square.Visited = true;
+                        square.MarkVisited();
                         square.HasGuard = true;
                         GuardStartingCoordinate = new CoordinateInt(x, y);
                     }
@@ -45,15 +39,20 @@ namespace AOTC2024.Day6
             }
         }        
 
-        public class Square
+        private class Square
         {
-            public bool Visited { get; set; }
+            public bool Visited { get; private set; }
 
             public bool HasObstacle { get; set; }   
 
             public bool HasGuard { get; set; }
 
-            public List<Facing> Facings { get; set; } = new List<Facing>();
+            private List<Facing> Facings { get; set; } = new List<Facing>();
+
+            public void MarkVisited()
+            {
+                Visited = true;
+            }
 
             // Returns true if this located was already visited with this facing
             public bool MarkVisited(Facing facing)
@@ -80,25 +79,33 @@ namespace AOTC2024.Day6
 
         private List<List<Square>> Squares { get; set; }
 
-        public CoordinateInt GuardStartingCoordinate { get; set; }
+        public CoordinateInt GuardStartingCoordinate { get; private set; }
 
+        /// <summary>
+        /// The number of squared visited by the guard
+        /// </summary>
+        /// <returns></returns>
         public int SquaresVisited()
         {
-            var visited = 0;
-            foreach(var square in Squares.SelectMany(x => x))
-            {
-                if(square.Visited)
-                    visited++;
-            }
-            return visited;
+            return Squares.SelectMany(x => x).Where(square => square.Visited).Count();
         }
 
-        // Returns true if location already visited with same facing
-        public bool MarkVisited(CoordinateInt coordinate, Facing facing)
+        /// <summary>
+        /// Determines if the guard has already visited this location with the same facing.
+        /// </summary>
+        /// <param name="coordinate">The guards current location</param>
+        /// <param name="facing">The guards current facing</param>
+        /// <returns>TRUE if the guard has already visited this location with the same facing; FALSE otherwise.</returns>
+        public bool HasVisited(CoordinateInt coordinate, Facing facing)
         {
             return Squares[coordinate.Y][coordinate.X].MarkVisited(facing);           
         }
 
+        /// <summary>
+        /// Determines if a given square contains an obstacle
+        /// </summary>
+        /// <param name="coordinate">The square to check</param>
+        /// <returns>TRUE if the location conatins an obstacle; FLASE otherwise.</returns>
         public bool IsBlocked(CoordinateInt coordinate)
         {
             if (IsWithinMap(coordinate))
@@ -107,6 +114,11 @@ namespace AOTC2024.Day6
             return false;
         }
 
+        /// <summary>
+        /// Determines if a given coordinate is within the bounds of the map.
+        /// </summary>
+        /// <param name="coordinate">The coordinate to check</param>
+        /// <returns>TRUE if the given coordinate is within the boounds of the map; FALSE otherwise.</returns>
         public bool IsWithinMap(CoordinateInt coordinate)
         {
             try
@@ -120,12 +132,18 @@ namespace AOTC2024.Day6
             }
         }
 
+        /// <summary>
+        /// Creates all variations of the original map where a single empty square now contains an obstacle.
+        /// </summary>
+        /// <returns>A List<Map> containing all map variations</returns>
         public List<Map> CreateTheorticalMaps()
         {
             var maps = new List<Map>();
             
             foreach(var square in Squares.SelectMany(s => s))
             {
+                // Square already has an obstacle or is the guards starting location, so 
+                // there's no need to test this variation.
                 if (square.HasObstacle || square.HasGuard)
                     continue;
                 
@@ -141,6 +159,10 @@ namespace AOTC2024.Day6
             return maps;
         }
 
+        /// <summary>
+        /// Creates a copy of the Map
+        /// </summary>
+        /// <returns>A copy of the Map</returns>
         public Map Copy()
         {
             var newSquares = new List<List<Square>>();            
@@ -159,6 +181,9 @@ namespace AOTC2024.Day6
             return new Map(newSquares, GuardStartingCoordinate);
         }
 
+        /// <summary>
+        /// Used for troubleshooting
+        /// </summary>
         public void PrintMe()
         {
             foreach(var squares in Squares)
