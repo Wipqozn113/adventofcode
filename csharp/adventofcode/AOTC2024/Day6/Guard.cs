@@ -126,18 +126,11 @@ namespace AOTC2024.Day6
             var total = 0;
 
             foreach (var map in maps) 
-            {               
-                Map = map;
+            {
+                var guard = new Guard(map);            
                 
-                var state = State.Fine;
-                while(state == State.Fine)
-                {
-                    state = Act();          
-                }
-                
-                if (state == State.Looping)
-                    total++;
-                ResetMe();                    
+                if (guard.PatrolLoops())
+                    total++;                       
             }
            
             Map = OriginalMap;
@@ -145,12 +138,18 @@ namespace AOTC2024.Day6
         }
 
         /// <summary>
-        /// Reset the guard to its starting location and facing.
+        /// Determines if the guards patrol loops
         /// </summary>
-        private void ResetMe()
+        /// <returns>TRUE if the patrol loops; FALSE otherwise</returns>
+        public bool PatrolLoops()
         {
-            CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
-            CurrentFacing = Facing.North;
+            var state = State.Fine;
+            while (state == State.Fine)
+            {
+                state = Act();
+            }
+
+            return state == State.Looping;
         }
     }
 }
