@@ -45,8 +45,6 @@ namespace AOTC2024.Day6
 
             public bool HasObstacle { get; set; }   
 
-            public bool StartingSquare { get; set; }
-
             public bool HasGuard { get; set; }
 
             private List<Facing> Facings { get; set; } = new List<Facing>();
@@ -65,16 +63,6 @@ namespace AOTC2024.Day6
                 Facings.Add(facing);
 
                 return insideLoop;
-            }
-
-            public void Reset()
-            {
-                Facings.Clear();
-                if(!StartingSquare)
-                {
-                    Visited = false;
-                    HasGuard = false;
-                }
             }
 
             public Square Copy()
@@ -151,22 +139,15 @@ namespace AOTC2024.Day6
         /// </summary>
         /// <returns>A List<Map> containing all map variations that could contain a loop.</returns>
         public IEnumerable  <Map> CreateTheorticalMaps()
-        {
-            var squares = Squares.SelectMany(s => s).Where(sq => sq.Visited && !sq.HasGuard).ToList();
-            foreach (var square in squares)
+        {            
+            foreach(var square in Squares.SelectMany(s => s).Where(sq => sq.Visited && !sq.HasGuard))
             {                
                 square.HasObstacle = true;
-                yield return this;
-                Reset();
-                square.HasObstacle = false;                
-            }
-        }
 
-        private void Reset()
-        {
-            foreach(var square in Squares.SelectMany(s => s).Where(sq => sq.Visited))
-            {
-                square.Reset();
+                var map = Copy();
+                yield return map;
+
+                square.HasObstacle = false;                
             }
         }
 
