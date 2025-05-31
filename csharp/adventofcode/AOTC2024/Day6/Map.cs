@@ -112,9 +112,9 @@ namespace AOTC2024.Day6
         }
 
         /// <summary>
-        /// Creates a copy of the Map
+        /// Creates a deep copy of the Map
         /// </summary>
-        /// <returns>A copy of the Map</returns>
+        /// <returns>A deep copy of the Map</returns>
         public Map Copy()
         {
             var newSquares = new List<List<Square>>();            
@@ -143,12 +143,19 @@ namespace AOTC2024.Day6
 
             private List<Facing> Facings { get; set; } = new List<Facing>();
 
+            /// <summary>
+            /// Mark this location as visited
+            /// </summary>
             public void MarkVisited()
             {
                 Visited = true;
             }
 
-            // Returns true if this located was already visited with this facing
+            /// <summary>
+            /// Marks a location as visited while also recording guard facing
+            /// </summary>
+            /// <param name="facing">The guards current facing</param>
+            /// <returns>TRUE if this location has already been visited with the same facing; FALSE otherwise.</returns>
             public bool MarkVisited(Facing facing)
             {
                 var insideLoop = Facings.Contains(facing) && Visited;
@@ -159,6 +166,10 @@ namespace AOTC2024.Day6
                 return insideLoop;
             }
 
+            /// <summary>
+            /// Creates a copy of this square
+            /// </summary>
+            /// <returns>A copy of this square</returns>
             public Square Copy()
             {
                 return new Square()
