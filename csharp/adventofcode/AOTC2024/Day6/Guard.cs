@@ -47,17 +47,19 @@ namespace AOTC2024.Day6
         /// <returns>The number of map variations which will put the guard into a patrol loop.</returns>
         public int CountPossibleLoops()
         {
+            // Perform the initial run of the original map so we can determine which squares were visited
             while (Act() == State.Fine) ;
             CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
-            var maps = Map.CreateTheorticalMaps();
+            int loops = 0;
 
-            Parallel.ForEach(maps, map =>
+            foreach(var map in Map.CreateTheorticalMaps())
             {
                 var guard = new Guard(map);
-                guard.PatrolLoops();
-            });
+                if (guard.PatrolLoops())
+                    loops++;
+            };
 
-            return maps.Where(m => m.ContainsLoop).Count();
+            return loops;
         }
 
         /// <summary>

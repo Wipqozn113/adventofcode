@@ -138,22 +138,17 @@ namespace AOTC2024.Day6
         /// Creates 1 map variation per square the guard visited in the original map. 
         /// </summary>
         /// <returns>A List<Map> containing all map variations that could contain a loop.</returns>
-        public List<Map> CreateTheorticalMaps()
-        {
-            var maps = new List<Map>();
-            
+        public IEnumerable  <Map> CreateTheorticalMaps()
+        {            
             foreach(var square in Squares.SelectMany(s => s).Where(sq => sq.Visited && !sq.HasGuard))
             {                
                 square.HasObstacle = true;
 
                 var map = Copy();
-                maps.Add(map);
+                yield return map;
 
-                square.HasObstacle = false;
-                
+                square.HasObstacle = false;                
             }
-
-            return maps;
         }
 
         /// <summary>
