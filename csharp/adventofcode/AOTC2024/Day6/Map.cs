@@ -22,7 +22,7 @@ namespace AOTC2024.Day6
                     if (c == '^')
                     {
                         square.MarkVisited();
-                        square.HasGuard = true;
+                        square.GuardStartingLocation = true;
                         GuardStartingCoordinate = new CoordinateInt(x, y);
                     }
                     squares.Add(square);
@@ -98,16 +98,28 @@ namespace AOTC2024.Day6
         /// Creates 1 map variation per square the guard visited in the original map. 
         /// </summary>
         /// <returns>A List<Map> containing all map variations that could contain a loop.</returns>
-        public IEnumerable<Map> CreateTheorticalMaps()
-        {            
-            foreach(var square in Squares.SelectMany(s => s).Where(sq => sq.Visited && !sq.HasGuard))
-            {                
-                square.HasObstacle = true;
+        public IEnumerable<Map> CreateTheorticalMaps(Guard guard)
+        {
+            // Need to do an initial run of the map so we can determine which squares were visited.
+            // We do this because we only need to place obstacles at locations the guard visited
+            // on its patrol on the original map
+            guard.PatrolLoops();
+            var squares = Squares.SelectMany(s => s).Where(sq => sq.Visited && !sq.GuardStartingLocation).ToList();
 
-                var map = Copy();
-                yield return map;
-
+            foreach (var square in squares)
+            {
+                Reset();
+                square.HasObstacle = true;                
+                yield return this;                
                 square.HasObstacle = false;                
+            }
+        }        
+
+        private void Reset()
+        {
+            foreach (var square in Squares.SelectMany(s => s).Where(sq => sq.Visited))
+            {
+                square.Reset();
             }
         }
 
@@ -115,7 +127,7 @@ namespace AOTC2024.Day6
         /// Creates a deep copy of the Map
         /// </summary>
         /// <returns>A deep copy of the Map</returns>
-        public Map Copy()
+        private Map Copy()
         {
             var newSquares = new List<List<Square>>();            
 
@@ -137,9 +149,9 @@ namespace AOTC2024.Day6
         {
             public bool Visited { get; private set; }
 
-            public bool HasObstacle { get; set; }
+            public bool GuardStartingLocation { get; set; }
 
-            public bool HasGuard { get; set; }
+            public bool HasObstacle { get; set; }
 
             private List<Facing> Facings { get; set; } = new List<Facing>();
 
@@ -176,9 +188,17 @@ namespace AOTC2024.Day6
                 {
                     Visited = false,
                     HasObstacle = HasObstacle,
-                    HasGuard = HasGuard,
                     Facings = new List<Facing>()
                 };
+            }
+
+            public void Reset()
+            {
+                Facings.Clear();
+                if(!GuardStartingLocation)
+                {
+                    Visited = false;                    
+                }
             }
         }
     }

@@ -38,11 +38,9 @@ namespace AOTC2024.Day6
         public int CountPossibleLoops()
         {
             // Perform the initial run of the original map so we can determine which squares were visited
-            while (Act() == State.Fine) ;
-            CurrentLocation = new CoordinateInt(StartingLocation.X, StartingLocation.Y);
             int loops = 0;
 
-            foreach(var map in Map.CreateTheorticalMaps())
+            foreach(var map in Map.CreateTheorticalMaps(this))
             {
                 var guard = new Guard(map);
                 if (guard.PatrolLoops())
@@ -56,7 +54,7 @@ namespace AOTC2024.Day6
         /// Determines if the guards patrol loops
         /// </summary>
         /// <returns>TRUE if the patrol loops; FALSE otherwise</returns>
-        private bool PatrolLoops()
+        public bool PatrolLoops()
         {
             var state = State.Fine;
             while (state == State.Fine)
