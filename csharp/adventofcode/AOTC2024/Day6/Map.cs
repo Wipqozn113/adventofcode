@@ -39,47 +39,7 @@ namespace AOTC2024.Day6
             GuardStartingCoordinate = guardStartingCoordinate;
         }
 
-        private class Square
-        {
-            public bool Visited { get; private set; }
-
-            public bool HasObstacle { get; set; }   
-
-            public bool HasGuard { get; set; }
-
-            private List<Facing> Facings { get; set; } = new List<Facing>();
-
-            public void MarkVisited()
-            {
-                Visited = true;
-            }
-
-            // Returns true if this located was already visited with this facing
-            public bool MarkVisited(Facing facing)
-            {
-                var insideLoop = Facings.Contains(facing) && Visited;
-
-                Visited = true;
-                Facings.Add(facing);
-
-                return insideLoop;
-            }
-
-            public Square Copy()
-            {
-                return new Square()
-                {
-                    Visited = false,
-                    HasObstacle = HasObstacle,
-                    HasGuard = HasGuard,    
-                    Facings = new List<Facing>()
-                };
-            }
-        }
-
         public CoordinateInt GuardStartingCoordinate { get; private set; }
-
-        public bool ContainsLoop { get; set; } = false;
 
         private List<List<Square>> Squares { get; set; }
 
@@ -138,7 +98,7 @@ namespace AOTC2024.Day6
         /// Creates 1 map variation per square the guard visited in the original map. 
         /// </summary>
         /// <returns>A List<Map> containing all map variations that could contain a loop.</returns>
-        public IEnumerable  <Map> CreateTheorticalMaps()
+        public IEnumerable<Map> CreateTheorticalMaps()
         {            
             foreach(var square in Squares.SelectMany(s => s).Where(sq => sq.Visited && !sq.HasGuard))
             {                
@@ -173,25 +133,42 @@ namespace AOTC2024.Day6
             return new Map(newSquares, GuardStartingCoordinate);
         }
 
-        /// <summary>
-        /// Used for troubleshooting
-        /// </summary>
-        public void PrintMe()
+        private class Square
         {
-            foreach(var squares in Squares)
+            public bool Visited { get; private set; }
+
+            public bool HasObstacle { get; set; }
+
+            public bool HasGuard { get; set; }
+
+            private List<Facing> Facings { get; set; } = new List<Facing>();
+
+            public void MarkVisited()
             {
-                var line = "";
-                foreach(var square in squares)
-                {
-                    var l = square.HasObstacle ? "#" : ".";
-                    if (square.Visited)
-                        l = "V";
-                    line += l;
-                }
-                Console.WriteLine(line);
+                Visited = true;
             }
-            Console.WriteLine();
-            Console.WriteLine();
+
+            // Returns true if this located was already visited with this facing
+            public bool MarkVisited(Facing facing)
+            {
+                var insideLoop = Facings.Contains(facing) && Visited;
+
+                Visited = true;
+                Facings.Add(facing);
+
+                return insideLoop;
+            }
+
+            public Square Copy()
+            {
+                return new Square()
+                {
+                    Visited = false,
+                    HasObstacle = HasObstacle,
+                    HasGuard = HasGuard,
+                    Facings = new List<Facing>()
+                };
+            }
         }
     }
 }

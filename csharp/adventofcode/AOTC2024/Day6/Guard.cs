@@ -5,28 +5,18 @@ namespace AOTC2024.Day6
 {
     public class Guard
     {
-        private enum State
-        {
-            Fine,
-            Looping,
-            OutsideMap
-        }
-
-        public  Guard(Map map)
+        public Guard(Map map)
         {
             Map = map;
-            OriginalMap = map;
             CurrentLocation = map.GuardStartingCoordinate;
             StartingLocation = new CoordinateInt(CurrentLocation.X, CurrentLocation.Y);
         }
 
-        public Map OriginalMap { get; set; }
+        private Map Map { get; set; }
 
-        public Map Map { get; set; }
+        private CoordinateInt CurrentLocation { get; set; }
 
-        public CoordinateInt CurrentLocation { get; set; }
-
-        public CoordinateInt StartingLocation { get; set; }
+        private CoordinateInt StartingLocation { get; set; }
 
         private Facing CurrentFacing { get; set; } = Facing.North;
 
@@ -66,7 +56,7 @@ namespace AOTC2024.Day6
         /// Determines if the guards patrol loops
         /// </summary>
         /// <returns>TRUE if the patrol loops; FALSE otherwise</returns>
-        public bool PatrolLoops()
+        private bool PatrolLoops()
         {
             var state = State.Fine;
             while (state == State.Fine)
@@ -112,7 +102,6 @@ namespace AOTC2024.Day6
                 CurrentLocation = NextCoordinate();
                 if (Map.HasVisited(CurrentLocation, CurrentFacing))
                 {
-                    Map.ContainsLoop = true;
                     return State.Looping;
                 }
                 return State.Fine;
@@ -152,6 +141,13 @@ namespace AOTC2024.Day6
                 return new CoordinateInt(CurrentLocation.X, CurrentLocation.Y + 1);
             else 
                 return new CoordinateInt(CurrentLocation.X - 1, CurrentLocation.Y);
+        }
+
+        private enum State
+        {
+            Fine,
+            Looping,
+            OutsideMap
         }
     }
 }
