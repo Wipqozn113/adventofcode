@@ -16,7 +16,8 @@ What is the Day 6 problem?
 
 The Day 6 problem involve simulating a guards patrol route through a location. 
 
-The goal of Part 1 is to calculate the number of unique squares the guard visits on a given map.
+The goal of Part 1 is to calculate the number of unique squares the guard visits on a given map before it leaves
+the bounds of the map.
 
 A map looks like this:
 
