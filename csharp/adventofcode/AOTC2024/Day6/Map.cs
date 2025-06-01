@@ -22,6 +22,7 @@ namespace AOTC2024.Day6
                     if (c == '^')
                     {
                         square.MarkVisited();
+                        VisitedSquares.Add(square);
                         square.GuardStartingLocation = true;
                         GuardStartingCoordinate = new CoordinateInt(x, y);
                     }
@@ -33,15 +34,11 @@ namespace AOTC2024.Day6
             }
         }
 
-        private Map(List<List<Square>> squares, CoordinateInt guardStartingCoordinate)
-        {
-            Squares = squares;
-            GuardStartingCoordinate = guardStartingCoordinate;
-        }
-
         public CoordinateInt GuardStartingCoordinate { get; private set; }
 
         private List<List<Square>> Squares { get; set; }
+
+        private List<Square> VisitedSquares { get; set; } = new List<Square>();
 
         /// <summary>
         /// The number of squared visited by the guard
@@ -49,7 +46,7 @@ namespace AOTC2024.Day6
         /// <returns></returns>
         public int SquaresVisited()
         {
-            return Squares.SelectMany(x => x).Where(square => square.Visited).Count();
+            return VisitedSquares.Count;
         }
 
         /// <summary>
@@ -60,8 +57,11 @@ namespace AOTC2024.Day6
         /// <returns>TRUE if the guard has already visited this location with the same facing; FALSE otherwise.</returns>
         public bool HasVisited(CoordinateInt coordinate, Facing facing)
         {
+            if (!Squares[coordinate.Y][coordinate.X].Visited)
+                VisitedSquares.Add(Squares[coordinate.Y][coordinate.X]);
+
             return Squares[coordinate.Y][coordinate.X].MarkVisited(facing);           
-        }
+        }        
 
         /// <summary>
         /// Determines if a given square contains an obstacle
@@ -104,7 +104,7 @@ namespace AOTC2024.Day6
             // We do this because we only need to place obstacles at locations the guard visited
             // on its patrol on the original map
             guard.PatrolLoops();
-            var squares = Squares.SelectMany(s => s).Where(sq => sq.Visited && !sq.GuardStartingLocation).ToList();
+            var squares = VisitedSquares.Where(sq => !sq.GuardStartingLocation).ToList();
 
             foreach (var square in squares)
             {
@@ -117,10 +117,12 @@ namespace AOTC2024.Day6
 
         private void Reset()
         {
-            foreach (var square in Squares.SelectMany(s => s).Where(sq => sq.Visited))
-            {
-                square.Reset();
-            }
+            Parallel.ForEach(VisitedSquares, square =>
+                {
+                    square.Reset();
+                });
+            VisitedSquares.Clear();
+            VisitedSquares.Add(Squares[GuardStartingCoordinate.Y][GuardStartingCoordinate.X]);
         }       
 
         private class Square
@@ -138,7 +140,7 @@ namespace AOTC2024.Day6
             /// </summary>
             public void MarkVisited()
             {
-                Visited = true;
+                Visited = true;                
             }
 
             /// <summary>
