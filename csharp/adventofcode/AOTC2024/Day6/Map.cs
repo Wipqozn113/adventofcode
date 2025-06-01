@@ -121,29 +121,7 @@ namespace AOTC2024.Day6
             {
                 square.Reset();
             }
-        }
-
-        /// <summary>
-        /// Creates a deep copy of the Map
-        /// </summary>
-        /// <returns>A deep copy of the Map</returns>
-        private Map Copy()
-        {
-            var newSquares = new List<List<Square>>();            
-
-            foreach(var squares in Squares)
-            {
-                var newSqrs = new List<Square>();
-                foreach(var square in squares)
-                {
-                    var sqr = square.Copy();
-                    newSqrs.Add(sqr);
-                }
-                newSquares.Add(newSqrs);
-            }
-
-            return new Map(newSquares, GuardStartingCoordinate);
-        }
+        }       
 
         private class Square
         {
@@ -176,20 +154,6 @@ namespace AOTC2024.Day6
                 Facings.Add(facing);
 
                 return insideLoop;
-            }
-
-            /// <summary>
-            /// Creates a copy of this square
-            /// </summary>
-            /// <returns>A copy of this square</returns>
-            public Square Copy()
-            {
-                return new Square()
-                {
-                    Visited = false,
-                    HasObstacle = HasObstacle,
-                    Facings = new List<Facing>()
-                };
             }
 
             public void Reset()
