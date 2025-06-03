@@ -36,11 +36,10 @@ namespace AOTC2024.Day6
         /// <returns>The number of map variations which will put the guard into a patrol loop.</returns>
         public int CountPossibleLoops()
         {
-            // Perform the initial run of the original map so we can determine which squares were visited
             int loops = 0;
-
             foreach(var map in Map.CreateTheorticalMaps(this))
             {
+
                 var guard = new Guard(map);
                 if (guard.PatrolLoops())
                     loops++;
