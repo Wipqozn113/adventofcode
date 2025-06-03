@@ -39,7 +39,6 @@ namespace AOTC2024.Day6
             int loops = 0;
             foreach(var map in Map.CreateTheorticalMaps(this))
             {
-
                 var guard = new Guard(map);
                 if (guard.PatrolLoops())
                     loops++;
