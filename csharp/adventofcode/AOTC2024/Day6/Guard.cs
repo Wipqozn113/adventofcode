@@ -33,7 +33,7 @@ namespace AOTC2024.Day6
         /// <summary>
         /// Calculates the number of map variations which will put the guard into a patrol loop. 
         /// </summary>
-        /// <returns>The number of map variations which will put the guard into a patrol loop.</returns>
+        /// <returns>The number of map variations which will put the guard into a patrol loop.</returns>   
         public int CountPossibleLoops()
         {
             int loops = 0;

@@ -1,4 +1,6 @@
-﻿namespace AOTC2024.Day6
+﻿using System.Diagnostics;
+
+namespace AOTC2024.Day6
 {
     public class D6
     {
@@ -11,9 +13,12 @@
 
         public static void Part2()
         {
+            var timer = new Stopwatch();
+            timer.Start();
             var guard = ParseInputFromFile("input.txt");
             var count = guard.CountPossibleLoops();
-            Console.WriteLine($"Part 2: {count}");
+            timer.Stop();
+            Console.WriteLine($"Part 2: {count} {timer.Elapsed.TotalSeconds }");
         }
 
         public static Guard ParseInputFromFile(string filename)
